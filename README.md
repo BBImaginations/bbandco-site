@@ -17,6 +17,5 @@ Static site for https://bbandcoimaginations.co.uk, hosted free on GitHub Pages.
 4. Commit. The site updates in about a minute.
 
 ## Things to fill in
-- `YOUR_FORM_ID` in every `formspree.io/f/...` form action (5 places) — get it from formspree.io after creating a free form.
+- Formspree form ID `moeqnalk` is already in place.
 - YouTube embed in `youtube.html` once the channel exists (see the HTML comment).
-- Cover images and song artwork (see `assets/covers/README.txt`).

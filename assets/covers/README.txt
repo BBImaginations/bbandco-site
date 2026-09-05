@@ -7,4 +7,4 @@ Drop your book cover images in this folder with EXACTLY these file names (JPG, s
 
 Also put the Butterflies single artwork one folder up, at:  assets/butterflies.jpg
 
-Until a file exists, the site shows a coloured placeholder with the title. Nothing else needs changing.
+All covers and the Butterflies artwork are in place.
