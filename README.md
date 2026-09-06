@@ -4,7 +4,7 @@ Static site for https://bbandcoimaginations.co.uk, hosted free on GitHub Pages.
 
 ## Folder map
 - `index.html` — home
-- `books.html`, `music.html`, `youtube.html`, `about.html` — main pages
+- `books.html`, `music.html`, `youtube.html`, `games.html`, `about.html` — main pages
 - `blog/index.html` — blog list; each post is its own file in `blog/`
 - `assets/style.css` — all styling
 - `assets/covers/` — book covers (see README.txt inside)
