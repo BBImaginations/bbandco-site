@@ -11,7 +11,7 @@ Static site for https://bbandcoimaginations.co.uk, hosted free on GitHub Pages.
 - `CNAME` — tells GitHub Pages which domain this site answers to. Do not delete.
 
 ## Adding a blog post
-1. Copy `blog/2026-09-hello.html`, rename it e.g. `blog/2026-11-new-song.html`.
+1. Copy `blog/2026-09-christmas-markets.html`, rename it e.g. `blog/2026-11-new-post.html`.
 2. Change the title, date and paragraphs inside.
 3. Add a matching `<li class="post-card">...</li>` entry at the top of the list in `blog/index.html`.
 4. Commit. The site updates in about a minute.
