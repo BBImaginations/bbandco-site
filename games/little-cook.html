@@ -1,0 +1,361 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+<title>Little Cook – real cooking for little hands | BB & Co Imaginations</title>
+<meta name="description" content="Pick, guess, find, make, celebrate, clean up. A screen that sends children into the kitchen to really cook, with a grown-up alongside.">
+<link rel="icon" href="../assets/icon.png" type="image/png">
+<link rel="manifest" href="little-cook.webmanifest">
+<link rel="apple-touch-icon" href="icons/cook-180.png">
+<meta name="theme-color" content="#1F4D3A">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Little Cook">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--paper:#FFF8EC;--ink:#1F4D3A;--ink-soft:#3F6B58;--sun:#FFC93C;--coral:#EE6352;--sky:#BFE3F4;--leaf:#7FB77E;--navy:#164A78;--white:#fff;--display:'Fredoka',system-ui,sans-serif;--body:'Nunito',system-ui,sans-serif}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{height:100%}
+body{font-family:var(--body);background:var(--paper);color:var(--ink);font-size:17px;line-height:1.5;overflow:hidden}
+button{font:inherit;cursor:pointer;color:inherit}
+canvas#confetti{position:fixed;inset:0;pointer-events:none;z-index:99}
+.screen{position:fixed;inset:0;display:none;flex-direction:column;overflow-y:auto;-webkit-overflow-scrolling:touch}
+.screen.active{display:flex;animation:in .25s ease}
+@keyframes in{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+.wrap{width:100%;max-width:560px;margin:0 auto;padding:20px;flex:1}
+.top{display:flex;align-items:center;gap:12px;padding:14px 20px;border-bottom:3px solid var(--ink);background:var(--paper);position:sticky;top:0;z-index:5}
+.top .back{display:inline-flex;align-items:center;justify-content:center;width:40px;height:40px;border-radius:50%;border:3px solid var(--ink);background:var(--white);font-size:18px;flex:none}
+.top h2{font-family:var(--display);font-weight:600;font-size:1.2rem;flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.gbrand{display:flex;justify-content:center;padding:10px 12px 0}
+.gbrand a{display:inline-block;background:var(--white);border:3px solid var(--ink);border-radius:999px;padding:6px 14px;line-height:0}
+.gbrand img{height:26px;width:auto;display:block}
+.top .gbrand{padding:0;margin-left:auto;flex:none}.top .gbrand a{border-width:2px;padding:4px 10px}.top .gbrand img{height:22px}
+h1,h2,h3{font-family:var(--display);font-weight:600;line-height:1.1}
+.btn{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;padding:16px 20px;border-radius:999px;border:3px solid var(--ink);background:var(--white);color:var(--ink);font-family:var(--display);font-weight:600;font-size:1.15rem;transition:transform .12s}
+.btn:active{transform:scale(.97)}.btn:disabled{opacity:.4}
+.btn-coral{background:var(--coral);color:var(--white)}.btn-ink{background:var(--ink);color:var(--white)}.btn-sun{background:var(--sun)}
+.btn-ghost{background:none;border:0;color:var(--ink-soft);font-size:1rem;padding:10px;font-weight:700}
+.stack{display:flex;flex-direction:column;gap:12px}
+.label{font-size:.75rem;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-soft);margin:18px 0 8px}
+.lede{color:var(--ink-soft);font-weight:600}
+.sticky{position:sticky;bottom:0;padding:12px 20px 20px;background:linear-gradient(transparent,var(--paper) 40%)}
+.sticky .btn{max-width:520px;margin:0 auto}
+/* HOME */
+.home{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:18px;padding:28px 24px;background:var(--sun)}
+.home>*{max-width:520px}
+.home .badge{font-size:72px;animation:float 3s ease-in-out infinite}
+@keyframes float{50%{transform:translateY(-10px)}}
+.home h1{font-size:clamp(2.6rem,12vw,4rem)}.home h1 span{color:var(--coral)}
+.home .stack{width:100%;max-width:320px}
+.brand-link{font-size:.85rem;color:var(--ink-soft);text-decoration:none;font-weight:700}
+.steps-row{display:flex;gap:4px;justify-content:center;flex-wrap:wrap;font-family:var(--display);font-weight:600;font-size:.85rem}
+.steps-row span{padding:4px 10px;border:2px solid var(--ink);border-radius:999px;background:var(--white)}
+/* PICK */
+.level{margin-bottom:22px}
+.level h3{display:flex;align-items:center;gap:8px;margin-bottom:10px;font-size:1.05rem}
+.level h3 small{font-family:var(--body);font-weight:700;font-size:.8rem;color:var(--ink-soft)}
+.cards{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.rcard{display:flex;flex-direction:column;align-items:center;gap:6px;padding:16px 10px;border:3px solid var(--ink);border-radius:18px;background:var(--white);text-align:center;box-shadow:4px 4px 0 var(--ink);transition:transform .12s}
+.rcard:active{transform:scale(.96)}
+.rcard .e{font-size:44px;line-height:1}
+.rcard .n{font-family:var(--display);font-weight:600;font-size:1.05rem;line-height:1.1}
+.rcard .t{font-size:.75rem;color:var(--ink-soft);font-weight:700}
+.rcard .done{position:absolute;top:8px;right:8px;font-size:18px}
+.rcard{position:relative}
+/* GUESS */
+.opts{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.opt{display:flex;flex-direction:column;align-items:center;gap:4px;padding:14px 6px;border:3px solid var(--ink);border-radius:16px;background:var(--white);font-family:var(--display);font-weight:500;font-size:.9rem;line-height:1.1;text-align:center;transition:transform .12s}
+.opt:active{transform:scale(.95)}
+.opt .e{font-size:36px;line-height:1}
+.opt.on{background:var(--sky)}
+.opt.yes{background:var(--leaf)}.opt.no{background:var(--paper);opacity:.55;text-decoration:line-through}.opt.miss{background:var(--sun);animation:wob .5s}
+@keyframes wob{25%{transform:rotate(-4deg)}75%{transform:rotate(4deg)}}
+.bubble{border:3px solid var(--ink);border-radius:18px;background:var(--white);padding:14px 16px;font-weight:600;box-shadow:4px 4px 0 var(--sun)}
+.bubble ul{margin:8px 0 0 18px}
+/* FIND */
+.check{display:flex;flex-direction:column;gap:10px}
+.ck{display:flex;align-items:center;gap:12px;padding:12px 14px;border:3px solid var(--ink);border-radius:16px;background:var(--white);font-family:var(--display);font-weight:500;font-size:1.05rem;text-align:left}
+.ck .box{width:32px;height:32px;border:3px solid var(--ink);border-radius:10px;display:flex;align-items:center;justify-content:center;flex:none;font-size:20px;background:var(--paper)}
+.ck.on{background:var(--leaf)}.ck.on .box{background:var(--white)}
+.ck .e{font-size:26px}
+.prog{height:14px;border:3px solid var(--ink);border-radius:999px;background:var(--white);overflow:hidden}
+.prog i{display:block;height:100%;background:var(--coral);transition:width .25s}
+/* MAKE */
+.who{display:inline-flex;align-items:center;gap:6px;padding:6px 12px;border-radius:999px;border:2px solid var(--ink);font-family:var(--display);font-weight:600;font-size:.85rem}
+.who.kid{background:#CFEFC9}.who.help{background:var(--sun)}.who.adult{background:var(--coral);color:var(--white)}
+.stepcard{border:3px solid var(--ink);border-radius:22px;background:var(--white);padding:24px 22px;box-shadow:6px 6px 0 var(--ink);display:flex;flex-direction:column;gap:14px;min-height:260px}
+.stepcard .e{font-size:64px;line-height:1;text-align:center}
+.stepcard .t{font-family:var(--display);font-weight:600;font-size:1.5rem;line-height:1.2;text-align:center}
+.stepcard .tip{font-size:.95rem;color:var(--ink-soft);text-align:center}
+.dots{display:flex;gap:6px;justify-content:center;flex-wrap:wrap;margin:14px 0}
+.dot{width:10px;height:10px;border-radius:50%;background:var(--white);border:2px solid var(--ink)}.dot.on{background:var(--ink)}.dot.done{background:var(--leaf)}
+.legend{display:flex;gap:6px;flex-wrap:wrap;justify-content:center;font-size:.8rem}
+/* CELEBRATE */
+.cele{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;padding:28px 24px;text-align:center;background:var(--sky)}
+.cele>*{max-width:520px;width:100%}
+.medal{width:150px;height:150px;border-radius:50%;background:var(--sun);border:4px solid var(--ink);display:flex;align-items:center;justify-content:center;font-size:76px;margin:0 auto;box-shadow:6px 6px 0 var(--ink);animation:pop .5s cubic-bezier(.34,1.56,.64,1)}
+@keyframes pop{from{transform:scale(0) rotate(-15deg)}}
+.stars{display:flex;flex-direction:column;gap:10px}
+.star{display:flex;align-items:center;gap:12px;padding:12px 16px;border:3px solid var(--ink);border-radius:16px;background:var(--white);text-align:left;font-weight:700}
+.star .s{font-size:1.3rem;flex:none;min-width:70px}
+.star.on{background:var(--sun)}
+/* PASSPORT */
+.stamp{display:flex;align-items:center;gap:12px;padding:12px 14px;border:3px solid var(--ink);border-radius:16px;background:var(--white)}
+.stamp .e{font-size:34px}.stamp .n{font-family:var(--display);font-weight:600}.stamp .m{font-size:.8rem;color:var(--ink-soft);font-weight:700}
+.empty{text-align:center;padding:40px 20px;color:var(--ink-soft)}
+.toast{position:fixed;bottom:100px;left:50%;transform:translateX(-50%);background:var(--ink);color:#fff;padding:10px 18px;border-radius:999px;font-weight:700;z-index:50;white-space:nowrap}
+.note{font-size:.85rem;color:var(--ink-soft);padding:10px 14px;border-left:4px solid var(--coral);background:var(--white);border-radius:0 10px 10px 0}
+</style>
+</head>
+<body>
+<canvas id="confetti"></canvas>
+
+<!-- HOME -->
+<section class="screen active" id="s-home">
+  <div class="home">
+    <div class="gbrand" style="padding:0"><a href="../games.html"><img src="../assets/logo-wide.png" alt="BB & Co Imaginations"></a></div>
+    <div class="badge">👩‍🍳</div>
+    <h1>Little <span>Cook</span></h1>
+    <p class="lede" style="color:var(--ink)">Real food, made by you, with a grown-up beside you. The screen just shows the way.</p>
+    <div class="steps-row"><span>Pick</span><span>Guess</span><span>Find</span><span>Make</span><span>Celebrate</span><span>Clean up</span></div>
+    <div class="stack">
+      <button class="btn btn-coral" onclick="go('pick')">🍳 Let's cook</button>
+      <button class="btn" onclick="go('passport')">📖 My passport <span id="pp-count"></span></button>
+      <button class="btn-ghost" id="installbtn" style="display:none" onclick="installApp()">📲 Add to your phone</button>
+    </div>
+    <div id="iossheet" style="display:none;max-width:320px;text-align:left;background:var(--white);border:3px solid var(--ink);border-radius:18px;padding:16px 18px;font-size:.95rem"><strong style="font-family:var(--display)">Add Little Cook to your home screen</strong><ol style="margin:8px 0 0 18px;line-height:1.6" id="iossteps"></ol><button class="btn-ghost" onclick="document.getElementById('iossheet').style.display='none'">Close</button></div>
+    <a class="brand-link" href="../games.html">Back to BB &amp; Co Imaginations</a>
+  </div>
+</section>
+
+<!-- PICK -->
+<section class="screen" id="s-pick">
+  <div class="top"><button class="back" onclick="go('home')">←</button><h2>What shall we make?</h2><div class="gbrand"><a href="../games.html"><img src="../assets/logo-wide.png" alt=""></a></div></div>
+  <div class="wrap" id="pick-list"></div>
+</section>
+
+<!-- GUESS -->
+<section class="screen" id="s-guess">
+  <div class="top"><button class="back" onclick="go('pick')">←</button><h2 id="g-title">Guess</h2><div class="gbrand"><a href="../games.html"><img src="../assets/logo-wide.png" alt=""></a></div></div>
+  <div class="wrap">
+    <h1 style="font-size:1.8rem">What do you think you'll need?</h1>
+    <p class="lede">Tap everything you think goes into <span id="g-name"></span>. Guessing is allowed!</p>
+    <div class="opts" id="g-opts" style="margin-top:14px"></div>
+    <div id="g-feedback" style="margin-top:16px"></div>
+  </div>
+  <div class="sticky"><button class="btn btn-coral" id="g-btn" onclick="checkGuess()">Check my guess ✅</button></div>
+</section>
+
+<!-- FIND -->
+<section class="screen" id="s-find">
+  <div class="top"><button class="back" onclick="go('guess')">←</button><h2>Kitchen mission</h2><div class="gbrand"><a href="../games.html"><img src="../assets/logo-wide.png" alt=""></a></div></div>
+  <div class="wrap">
+    <h1 style="font-size:1.8rem">🕵️ Kitchen mission!</h1>
+    <p class="lede">Put the screen down and go and find everything. Tick each one as you bring it back.</p>
+    <div class="prog" style="margin:14px 0"><i id="f-prog" style="width:0"></i></div>
+    <div class="check" id="f-list"></div>
+  </div>
+  <div class="sticky"><button class="btn btn-coral" id="f-btn" disabled onclick="go('ready')">Got everything! →</button></div>
+</section>
+
+<!-- READY -->
+<section class="screen" id="s-ready">
+  <div class="top"><button class="back" onclick="go('find')">←</button><h2>Before we start</h2><div class="gbrand"><a href="../games.html"><img src="../assets/logo-wide.png" alt=""></a></div></div>
+  <div class="wrap">
+    <h1 style="font-size:1.8rem">Ready to cook?</h1>
+    <div class="check" style="margin-top:14px" id="r-list">
+      <button class="ck" onclick="tickReady(this)"><span class="box"></span><span class="e">🧼</span>Hands washed</button>
+      <button class="ck" onclick="tickReady(this)"><span class="box"></span><span class="e">🧽</span>Workspace clear</button>
+      <button class="ck" onclick="tickReady(this)"><span class="box"></span><span class="e">🧑‍🍳</span>Grown-up ready</button>
+    </div>
+    <div class="legend" style="margin-top:22px"><span class="who kid">🟢 I can do this</span><span class="who help">🟡 Grown-up helps</span><span class="who adult">🔴 Grown-up does this</span></div>
+    <p class="note" style="margin-top:16px">Grown-ups: check the ingredients for any allergies before you begin. Anything hot or sharp is always yours.</p>
+  </div>
+  <div class="sticky"><button class="btn btn-ink" id="r-btn" disabled onclick="startMake()">Let's make it! 🍳</button></div>
+</section>
+
+<!-- MAKE -->
+<section class="screen" id="s-make">
+  <div class="top"><button class="back" onclick="go('ready')">←</button><h2 id="m-title">Make</h2><div class="gbrand"><a href="../games.html"><img src="../assets/logo-wide.png" alt=""></a></div></div>
+  <div class="wrap">
+    <div class="dots" id="m-dots"></div>
+    <div class="stepcard" id="m-card"></div>
+    <div style="display:flex;gap:10px;margin-top:18px">
+      <button class="btn" id="m-prev" onclick="stepTo(-1)" style="flex:1">← Back</button>
+      <button class="btn btn-coral" id="m-next" onclick="stepTo(1)" style="flex:2">Done, next →</button>
+    </div>
+  </div>
+</section>
+
+<!-- CELEBRATE -->
+<section class="screen" id="s-celebrate">
+  <div class="cele">
+    <div class="gbrand" style="padding:0"><a href="../games.html"><img src="../assets/logo-wide.png" alt=""></a></div>
+    <div class="medal" id="c-medal">🥪</div>
+    <h1 id="c-badge">Sandwich Star</h1>
+    <p class="lede" style="color:var(--ink)" id="c-line">You made a real sandwich!</p>
+    <div class="label" style="text-align:left">Grown-up: how did they do?</div>
+    <div class="stars" id="c-stars">
+      <button class="star" onclick="setStars(1,this)"><span class="s">⭐</span>Made with lots of help</button>
+      <button class="star" onclick="setStars(2,this)"><span class="s">⭐⭐</span>Made with a little help</button>
+      <button class="star" onclick="setStars(3,this)"><span class="s">⭐⭐⭐</span>Almost by myself</button>
+    </div>
+    <button class="btn btn-ink" id="c-btn" disabled onclick="stampAndReset()">Stamp my passport 📖</button>
+  </div>
+</section>
+
+<!-- RESET -->
+<section class="screen" id="s-reset">
+  <div class="top"><h2>Kitchen reset</h2><div class="gbrand"><a href="../games.html"><img src="../assets/logo-wide.png" alt=""></a></div></div>
+  <div class="wrap" style="display:flex;flex-direction:column;justify-content:center;text-align:center;gap:18px">
+    <div style="font-size:64px">🧹</div>
+    <h1 style="font-size:1.8rem">One last mission</h1>
+    <div class="bubble" id="x-task" style="font-family:var(--display);font-size:1.3rem;font-weight:600"></div>
+    <p class="lede">Little cooks tidy too. Off you go!</p>
+    <button class="btn btn-coral" onclick="finishAll()">Done! 🎉</button>
+  </div>
+</section>
+
+<!-- PASSPORT -->
+<section class="screen" id="s-passport">
+  <div class="top"><button class="back" onclick="go('home')">←</button><h2>Little Cook passport</h2><div class="gbrand"><a href="../games.html"><img src="../assets/logo-wide.png" alt=""></a></div></div>
+  <div class="wrap stack" id="pp-list"></div>
+</section>
+
+<script>
+/* =========================================================
+   RECIPE DATA — add a new recipe by adding one object here.
+   who: 'kid' (🟢 child can do), 'help' (🟡 grown-up helps), 'adult' (🔴 grown-up does)
+   Anything with heat or sharp knives must be 'adult' or 'help'.
+========================================================= */
+const RECIPES=[
+{id:'sandwich',name:'Make a sandwich',emoji:'🥪',level:1,time:'10 min',badge:'Sandwich Star',line:'You built a real sandwich, all by your own hands!',
+ needs:[{n:'Bread',e:'🍞'},{n:'Butter or spread',e:'🧈'},{n:'Filling (cheese, ham or jam)',e:'🧀'},{n:'Plate',e:'🍽️'},{n:'Butter knife',e:'🔪'}],
+ decoys:[{n:'Frying pan',e:'🍳'},{n:'Ice cubes',e:'🧊'},{n:'Whisk',e:'🥄'},{n:'Oven',e:'♨️'}],
+ steps:[{t:'Put two slices of bread on the plate.',e:'🍞',who:'kid'},{t:'Spread butter on one side of each slice, right to the edges.',e:'🧈',who:'kid',tip:'A blunt butter knife is perfect for this.'},{t:'Lay your filling on one slice.',e:'🧀',who:'kid'},{t:'Pop the other slice on top, butter side down.',e:'🥪',who:'kid'},{t:'Cut it in half. Triangles or squares?',e:'🔪',who:'help',tip:'Grown-up holds the knife; you choose the shape.'},{t:'Onto the plate and… ta-da!',e:'🎉',who:'kid'}]},
+
+{id:'fruitbowl',name:'Fruit & yoghurt bowl',emoji:'🍓',level:1,time:'10 min',badge:'Fruit Explorer',line:'A rainbow bowl, made by you!',
+ needs:[{n:'Yoghurt',e:'🥣'},{n:'Soft fruit (banana, berries)',e:'🍌'},{n:'Bowl',e:'🥣'},{n:'Spoon',e:'🥄'},{n:'Butter knife',e:'🔪'}],
+ decoys:[{n:'Saucepan',e:'🥘'},{n:'Ketchup',e:'🍅'},{n:'Rolling pin',e:'🪵'},{n:'Cheese grater',e:'🧀'}],
+ steps:[{t:'Spoon yoghurt into the bowl. Fill it about halfway.',e:'🥣',who:'kid'},{t:'Peel the banana.',e:'🍌',who:'kid'},{t:'Slice the banana into coins with a butter knife.',e:'🔪',who:'help',tip:'Fingers behind the knife, slow and steady.'},{t:'Rinse the berries in a sieve or colander.',e:'💧',who:'kid'},{t:'Arrange the fruit on top. Make a face, a rainbow or a pattern!',e:'🌈',who:'kid'},{t:'Sprinkle something crunchy if you like: seeds, oats or cereal.',e:'✨',who:'kid'}]},
+
+{id:'kebabs',name:'Fruit kebabs',emoji:'🍢',level:1,time:'15 min',badge:'Kebab Captain',line:'Fruit on a stick: the best kind of fruit!',
+ needs:[{n:'3 kinds of fruit',e:'🍇'},{n:'Wooden skewers or straws',e:'🥢'},{n:'Chopping board',e:'🟫'},{n:'Butter knife',e:'🔪'},{n:'Plate',e:'🍽️'}],
+ decoys:[{n:'Frying pan',e:'🍳'},{n:'Flour',e:'🌾'},{n:'Oven gloves',e:'🧤'},{n:'Salt',e:'🧂'}],
+ steps:[{t:'Wash the fruit and pat it dry.',e:'💧',who:'kid'},{t:'Cut big fruit into bite-size chunks.',e:'🔪',who:'help',tip:'Grown-up cuts anything hard; you cut soft fruit like banana with the butter knife.'},{t:'Choose a pattern: red, yellow, green, red, yellow, green…',e:'🌈',who:'kid'},{t:'Push the fruit onto the skewer, one piece at a time.',e:'🍢',who:'help',tip:'Skewers are pointy. A grown-up holds the pointy end, or use a paper straw.'},{t:'Line them up on the plate like little rainbows.',e:'🍽️',who:'kid'},{t:'Squeeze a little lime or orange juice over the top for sparkle.',e:'🍋',who:'kid'}]},
+
+{id:'eggs',name:'Scrambled eggs',emoji:'🍳',level:2,time:'15 min',badge:'Egg-cellent Chef',line:'You cracked it. Literally!',
+ needs:[{n:'2 eggs',e:'🥚'},{n:'Splash of milk',e:'🥛'},{n:'Small knob of butter',e:'🧈'},{n:'Bowl',e:'🥣'},{n:'Fork or whisk',e:'🍴'},{n:'Frying pan',e:'🍳'},{n:'Wooden spoon',e:'🥄'}],
+ decoys:[{n:'Rolling pin',e:'🪵'},{n:'Ice cream',e:'🍦'},{n:'Skewers',e:'🥢'}],
+ steps:[{t:'Crack the eggs into the bowl. Tap, tap, open!',e:'🥚',who:'kid',tip:'Crack on the flat counter, not the bowl edge. Fish out any shell with a spoon.'},{t:'Add a splash of milk and a tiny pinch of salt.',e:'🥛',who:'kid'},{t:'Whisk until it is all one yellow colour.',e:'🍴',who:'kid'},{t:'Grown-up heats the pan on low and melts the butter.',e:'🔥',who:'adult'},{t:'Grown-up pours the egg in. Watch it start to set at the edges.',e:'🍳',who:'adult'},{t:'Stir slowly with the wooden spoon, grown-up holding the pan.',e:'🥄',who:'help',tip:'Stand back from the hob. Slow stirring makes soft eggs.'},{t:'Grown-up takes it off the heat while it is still a bit glossy, and spoons it onto your plate.',e:'🍽️',who:'adult'}]},
+
+{id:'pancakes',name:'Pancakes',emoji:'🥞',level:2,time:'25 min',badge:'Pancake Pro',line:'Flip-tastic! Real pancakes, made by you.',
+ needs:[{n:'Flour (1 cup)',e:'🌾'},{n:'Milk (1 cup)',e:'🥛'},{n:'1 egg',e:'🥚'},{n:'Butter or oil',e:'🧈'},{n:'Mixing bowl',e:'🥣'},{n:'Whisk',e:'🥄'},{n:'Frying pan',e:'🍳'},{n:'Measuring cup',e:'🥤'}],
+ decoys:[{n:'Cheese grater',e:'🧀'},{n:'Ice cubes',e:'🧊'},{n:'Potato masher',e:'🥔'}],
+ steps:[{t:'Measure the flour into the bowl.',e:'🌾',who:'kid',tip:'Level the cup with the back of a knife.'},{t:'Crack in the egg. Tap, tap, open!',e:'🥚',who:'kid'},{t:'Pour in the milk, a bit at a time.',e:'🥛',who:'kid'},{t:'Whisk until smooth, no lumps. Count to 30!',e:'🥄',who:'kid'},{t:'Grown-up heats the pan and adds a little butter.',e:'🔥',who:'adult'},{t:'Grown-up pours a small ladle of batter into the pan.',e:'🍳',who:'adult'},{t:'Watch for bubbles on top. Bubbles mean it is time to flip. Shout "FLIP!"',e:'🫧',who:'kid'},{t:'Grown-up flips it and cooks the other side.',e:'🥞',who:'adult'},{t:'Stack them up and add your toppings.',e:'🍓',who:'kid'}]},
+
+{id:'pizza',name:'Pitta pizza',emoji:'🍕',level:3,time:'20 min',badge:'Pizza Maker',line:'Your very own pizza. Chef\u2019s kiss!',
+ needs:[{n:'Pitta or flatbread',e:'🫓'},{n:'Tomato passata or purée',e:'🍅'},{n:'Grated cheese',e:'🧀'},{n:'Toppings (peppers, sweetcorn, ham)',e:'🫑'},{n:'Spoon',e:'🥄'},{n:'Baking tray',e:'🟫'},{n:'Oven gloves',e:'🧤'}],
+ decoys:[{n:'Whisk',e:'🥄'},{n:'Ice cubes',e:'🧊'},{n:'Yoghurt',e:'🥣'}],
+ steps:[{t:'Grown-up turns the oven on to 200°C (fan 180°C).',e:'♨️',who:'adult'},{t:'Put the pitta on the baking tray.',e:'🫓',who:'kid'},{t:'Spoon tomato sauce on and spread it out like paint. Leave a little edge.',e:'🍅',who:'kid'},{t:'Sprinkle cheese all over. Snow!',e:'🧀',who:'kid'},{t:'Add your toppings. Make a face if you like.',e:'🫑',who:'kid',tip:'Grown-up chops anything that needs chopping.'},{t:'Grown-up puts the tray in the oven for about 8 minutes.',e:'🔥',who:'adult'},{t:'Grown-up takes it out with oven gloves and lets it cool for two minutes.',e:'🧤',who:'adult',tip:'Cheese stays hot longer than it looks.'},{t:'Grown-up slices it. You choose how many pieces.',e:'🔪',who:'help'}]}
+];
+const LEVELS={1:{n:'Level 1 · No heat',s:'Assembling and preparing'},2:{n:'Level 2 · Mix & make',s:'Measuring, pouring, cracking, mixing'},3:{n:'Level 3 · Cook with a grown-up',s:'Heat and more advanced prep'}};
+const RESETS=['Can you put three things back where they belong?','Take your plate to the sink.','Help wipe your workspace with a cloth.','Put the spoons and forks back in the drawer.','Find the lid for every tub you used.','Wipe up any crumbs you can spot.'];
+const WHO={kid:['🟢','I can do this'],help:['🟡','Grown-up helps'],adult:['🔴','Grown-up does this']};
+
+/* ---------- STATE ---------- */
+const S={r:null,picked:new Set(),found:new Set(),step:0,stars:0,ready:0};
+const $=id=>document.getElementById(id);
+const pick=a=>a[Math.floor(Math.random()*a.length)];
+const shuffle=a=>[...a].sort(()=>Math.random()-.5);
+
+function go(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));const t=$('s-'+id);t.classList.add('active');t.scrollTop=0;
+  if(id==='pick')renderPick();if(id==='passport')renderPassport();if(id==='home')paintCount();snd('click');}
+
+/* ---------- PICK ---------- */
+function renderPick(){const pp=loadPassport();const el=$('pick-list');el.innerHTML='';
+  for(const lv of [1,2,3]){const rs=RECIPES.filter(r=>r.level===lv);if(!rs.length)continue;
+    el.innerHTML+=`<div class="level"><h3>${LEVELS[lv].n} <small>${LEVELS[lv].s}</small></h3><div class="cards">${rs.map(r=>{const d=pp.filter(p=>p.id===r.id).length;return `<button class="rcard" onclick="choose('${r.id}')">${d?`<span class="done">${'⭐'.repeat(Math.min(3,Math.max(...pp.filter(p=>p.id===r.id).map(p=>p.stars))))}</span>`:''}<span class="e">${r.emoji}</span><span class="n">${r.name}</span><span class="t">${r.time}</span></button>`;}).join('')}</div></div>`;}}
+function choose(id){S.r=RECIPES.find(r=>r.id===id);S.picked=new Set();S.found=new Set();S.step=0;S.stars=0;snd('pick');renderGuess();go('guess');}
+
+/* ---------- GUESS ---------- */
+function renderGuess(){const r=S.r;$('g-title').textContent=r.name;$('g-name').textContent=r.name.toLowerCase();$('g-feedback').innerHTML='';$('g-btn').textContent='Check my guess ✅';$('g-btn').onclick=checkGuess;
+  S.opts=shuffle([...r.needs.map(x=>({...x,ok:true})),...r.decoys.map(x=>({...x,ok:false}))]);
+  $('g-opts').innerHTML=S.opts.map((o,i)=>`<button class="opt" id="o${i}" onclick="togglePick(${i})"><span class="e">${o.e}</span>${o.n}</button>`).join('');}
+function togglePick(i){if(S.checked)return;const el=$('o'+i);if(S.picked.has(i)){S.picked.delete(i);el.classList.remove('on');}else{S.picked.add(i);el.classList.add('on');}snd('click');}
+function checkGuess(){if(!S.picked.size){toast('Tap a few things first 👆');return;}S.checked=true;let got=0,miss=[],wrong=[];
+  S.opts.forEach((o,i)=>{const el=$('o'+i);el.classList.remove('on');if(o.ok&&S.picked.has(i)){el.classList.add('yes');got++;}else if(o.ok){el.classList.add('miss');miss.push(o);}else if(S.picked.has(i)){el.classList.add('no');wrong.push(o);}else{el.style.opacity='.35';}});
+  const total=S.r.needs.length;let msg;
+  if(!miss.length&&!wrong.length)msg=`<strong>Perfect! 🌟</strong> You knew every single thing. Are you secretly a chef?`;
+  else if(got>=total-1)msg=`<strong>So close! 👏</strong> You got ${got} out of ${total}.`;
+  else msg=`<strong>Good guessing! 😄</strong> You got ${got} out of ${total}. Here are some clues:`;
+  let clues='';if(miss.length)clues+='<ul>'+miss.map(o=>`<li>${o.e} You'll also need <strong>${o.n.toLowerCase()}</strong>${clue(o)}</li>`).join('')+'</ul>';
+  if(wrong.length)clues+=`<p style="margin-top:8px">${wrong.map(o=>o.e).join(' ')} Funny idea, but you won't need ${wrong.map(o=>o.n.toLowerCase()).join(' or ')} this time!</p>`;
+  $('g-feedback').innerHTML=`<div class="bubble">${msg}${clues}</div>`;$('g-feedback').scrollIntoView({behavior:'smooth',block:'end'});
+  snd(miss.length||wrong.length?'funny':'fanfare');if(!miss.length&&!wrong.length)confetti();
+  $('g-btn').textContent='Got it! Kitchen mission →';$('g-btn').onclick=()=>{S.checked=false;renderFind();go('find');};}
+function clue(o){const n=o.n.toLowerCase();if(/plate|bowl/.test(n))return ' — what will you put it on or in?';if(/knife/.test(n))return ' — for spreading or cutting.';if(/spoon|whisk|fork/.test(n))return ' — for stirring or mixing.';if(/pan|tray/.test(n))return ' — something to cook it in.';if(/glove/.test(n))return ' — to keep grown-up hands safe.';return '.';}
+
+/* ---------- FIND ---------- */
+function renderFind(){const r=S.r;S.found=new Set();$('f-list').innerHTML=r.needs.map((o,i)=>`<button class="ck" id="f${i}" onclick="tickFind(${i})"><span class="box"></span><span class="e">${o.e}</span>${o.n}</button>`).join('');paintFind();}
+function tickFind(i){const el=$('f'+i);if(S.found.has(i)){S.found.delete(i);el.classList.remove('on');el.querySelector('.box').textContent='';}else{S.found.add(i);el.classList.add('on');el.querySelector('.box').textContent='✓';snd('pick');}paintFind();}
+function paintFind(){const n=S.r.needs.length,f=S.found.size;$('f-prog').style.width=(100*f/n)+'%';$('f-btn').disabled=f<n;if(f===n){snd('fanfare');confetti();}}
+
+/* ---------- READY ---------- */
+function tickReady(el){el.classList.toggle('on');el.querySelector('.box').textContent=el.classList.contains('on')?'✓':'';snd('pick');$('r-btn').disabled=document.querySelectorAll('#r-list .ck.on').length<3;}
+
+/* ---------- MAKE ---------- */
+function startMake(){S.step=0;$('m-title').textContent=S.r.name;snd('go');paintStep();go('make');}
+function paintStep(){const r=S.r,s=r.steps[S.step],w=WHO[s.who];
+  $('m-dots').innerHTML=r.steps.map((_,i)=>`<span class="dot ${i<S.step?'done':i===S.step?'on':''}"></span>`).join('');
+  $('m-card').innerHTML=`<div style="text-align:center"><span class="who ${s.who}">${w[0]} ${w[1]}</span></div><div class="e">${s.e}</div><div class="t">${s.t}</div>${s.tip?`<div class="tip">💡 ${s.tip}</div>`:''}<div class="tip" style="margin-top:auto">Step ${S.step+1} of ${r.steps.length}</div>`;
+  $('m-prev').style.visibility=S.step?'visible':'hidden';$('m-next').textContent=S.step===r.steps.length-1?'All done! 🎉':'Done, next →';}
+function stepTo(d){S.step+=d;if(S.step>=S.r.steps.length){celebrate();return;}if(S.step<0)S.step=0;snd(d>0?'pick':'click');paintStep();}
+
+/* ---------- CELEBRATE ---------- */
+function celebrate(){const r=S.r;$('c-medal').textContent=r.emoji;$('c-badge').textContent=r.badge;$('c-line').textContent=r.line;S.stars=0;document.querySelectorAll('.star').forEach(s=>s.classList.remove('on'));$('c-btn').disabled=true;go('celebrate');snd('fanfare');setTimeout(confetti,200);}
+function setStars(n,el){S.stars=n;document.querySelectorAll('.star').forEach(s=>s.classList.remove('on'));el.classList.add('on');$('c-btn').disabled=false;snd('pick');}
+function stampAndReset(){const pp=loadPassport();pp.unshift({id:S.r.id,stars:S.stars,at:new Date().toISOString()});try{localStorage.setItem('bbco_littlecook',JSON.stringify(pp.slice(0,200)));}catch(e){}
+  $('x-task').textContent=pick(RESETS);snd('lock');go('reset');}
+function finishAll(){snd('fanfare');confetti();setTimeout(()=>go('passport'),600);}
+
+/* ---------- PASSPORT ---------- */
+function loadPassport(){try{return JSON.parse(localStorage.getItem('bbco_littlecook')||'[]');}catch(e){return[];}}
+function paintCount(){const n=loadPassport().length;$('pp-count').textContent=n?`(${n})`:'';}
+function renderPassport(){const pp=loadPassport(),el=$('pp-list');if(!pp.length){el.innerHTML='<div class="empty">📖<br>No stamps yet. Cook something and come back!</div>';return;}
+  const by={};pp.forEach(p=>{by[p.id]=by[p.id]||[];by[p.id].push(p);});
+  el.innerHTML=`<p class="lede">${pp.length} thing${pp.length>1?'s':''} cooked. Look how you're growing!</p>`+RECIPES.filter(r=>by[r.id]).map(r=>{const l=by[r.id];const best=Math.max(...l.map(p=>p.stars));return `<div class="stamp"><span class="e">${r.emoji}</span><div style="flex:1"><div class="n">${r.badge}</div><div class="m">${r.name} · made ${l.length}× · best ${'⭐'.repeat(best)}</div></div></div>`;}).join('')
+  +`<button class="btn-ghost" onclick="if(confirm('Clear the passport?')){localStorage.removeItem('bbco_littlecook');renderPassport();}">Clear passport</button>`;}
+
+/* ---------- SOUND ---------- */
+let AC=null;function ac(){if(!AC){try{AC=new(window.AudioContext||window.webkitAudioContext)();}catch(e){}}if(AC&&AC.state==='suspended')AC.resume();return AC;}
+function tone(f,t0,d,type='sine',g0=.3){const c=ac();if(!c)return;const o=c.createOscillator(),g=c.createGain();o.type=type;o.connect(g);g.connect(c.destination);o.frequency.setValueAtTime(f,t0);g.gain.setValueAtTime(g0,t0);g.gain.exponentialRampToValueAtTime(.001,t0+d);o.start(t0);o.stop(t0+d+.01);}
+function snd(k){const c=ac();if(!c)return;const n=c.currentTime;
+  if(k==='click')tone(600,n,.06,'triangle',.18);
+  if(k==='pick'){tone(660,n,.09,'triangle',.25);tone(990,n+.08,.12,'triangle',.25);}
+  if(k==='lock'){tone(220,n,.12,'square',.2);tone(330,n+.1,.18,'square',.2);}
+  if(k==='fanfare')[[523,0],[659,.14],[784,.28],[1047,.42]].forEach(([f,d])=>tone(f,n+d,.28,'triangle',.3));
+  if(k==='funny')[[400,0],[500,.12],[350,.24]].forEach(([f,d])=>tone(f,n+d,.1,'square',.14));
+  if(k==='go'){const o=c.createOscillator(),g=c.createGain();o.type='sawtooth';o.connect(g);g.connect(c.destination);o.frequency.setValueAtTime(200,n);o.frequency.exponentialRampToValueAtTime(1400,n+.35);g.gain.setValueAtTime(.2,n);g.gain.exponentialRampToValueAtTime(.001,n+.4);o.start(n);o.stop(n+.42);}}
+function toast(m){document.querySelectorAll('.toast').forEach(t=>t.remove());const t=document.createElement('div');t.className='toast';t.textContent=m;document.body.appendChild(t);setTimeout(()=>t.remove(),2200);}
+
+/* ---------- CONFETTI ---------- */
+const cv=$('confetti'),cx=cv.getContext('2d');let ps=[],run=false;
+function confetti(){cv.width=innerWidth;cv.height=innerHeight;ps=[];const col=['#EE6352','#FFC93C','#7FB77E','#BFE3F4','#164A78','#E4722F'];for(let i=0;i<110;i++)ps.push({x:Math.random()*cv.width,y:-20-Math.random()*100,w:4+Math.random()*12,h:3+Math.random()*8,c:pick(col),vx:Math.random()*5-2.5,vy:2+Math.random()*4,r:Math.random()*360,rv:Math.random()*12-6,o:1});if(!run){run=true;anim();}}
+function anim(){if(!run)return;cx.clearRect(0,0,cv.width,cv.height);ps=ps.filter(p=>p.o>.01&&p.y<cv.height+20);if(!ps.length){run=false;return;}ps.forEach(p=>{p.x+=p.vx;p.y+=p.vy;p.r+=p.rv;if(p.y>cv.height*.6)p.o-=.018;cx.save();cx.translate(p.x,p.y);cx.rotate(p.r*Math.PI/180);cx.globalAlpha=Math.max(0,p.o);cx.fillStyle=p.c;cx.fillRect(-p.w/2,-p.h/2,p.w,p.h);cx.restore();});requestAnimationFrame(anim);}
+
+/* ---------- INSTALL ---------- */
+let deferredPrompt=null;const standalone=window.matchMedia('(display-mode: standalone)').matches||navigator.standalone===true;const isIOS=/iphone|ipad|ipod/i.test(navigator.userAgent);
+window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();deferredPrompt=e;if(!standalone)$('installbtn').style.display='block';});
+if(isIOS&&!standalone)$('installbtn').style.display='block';
+function installApp(){if(deferredPrompt){deferredPrompt.prompt();deferredPrompt.userChoice.then(()=>{deferredPrompt=null;$('installbtn').style.display='none';});return;}
+  const safari=/safari/i.test(navigator.userAgent)&&!/crios|fxios|edgios/i.test(navigator.userAgent);
+  $('iossteps').innerHTML=(safari?['Tap the <strong>Share</strong> button at the bottom of Safari.','Scroll down and tap <strong>Add to Home Screen</strong>.','Tap <strong>Add</strong>.']:['Open this page in <strong>Safari</strong>.','Tap <strong>Share</strong>, then <strong>Add to Home Screen</strong>.','Tap <strong>Add</strong>.']).map(t=>`<li>${t}</li>`).join('');$('iossheet').style.display='block';}
+if('serviceWorker'in navigator&&location.protocol==='https:')navigator.serviceWorker.register('sw-cook.js',{scope:'./little-cook'}).catch(()=>{});
+
+paintCount();
+</script>
+</body>
+</html>
