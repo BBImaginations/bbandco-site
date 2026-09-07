@@ -3,7 +3,7 @@
   "short_name": "Who Wins?",
   "description": "Do the challenge first. Find out the rule after. A fair, silly family game.",
   "start_url": "./who-wins.html",
-  "scope": "./who-wins",
+  "scope": "./",
   "display": "standalone",
   "orientation": "portrait",
   "background_color": "#BFE3F4",

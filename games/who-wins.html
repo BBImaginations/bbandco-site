@@ -434,7 +434,7 @@ function installApp(){
     :['Open this page in <strong>Safari</strong> (Apple only allows home-screen apps from Safari).','Tap the <strong>Share</strong> button, then <strong>Add to Home Screen</strong>.','Tap <strong>Add</strong>.']).map(t=>`<li>${t}</li>`).join('');
   $('iossheet').style.display='block';
 }
-if('serviceWorker'in navigator&&location.protocol==='https:')navigator.serviceWorker.register('sw.js',{scope:'./who-wins'}).catch(()=>{});
+if('serviceWorker'in navigator&&location.protocol==='https:')navigator.serviceWorker.register('sw.js').catch(()=>{});
 
 /* ---------- INIT ---------- */
 paintPlayers();renderCats();renderIdeas();
