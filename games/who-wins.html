@@ -6,6 +6,12 @@
 <title>Who Wins? – a family challenge game | BB & Co Imaginations</title>
 <meta name="description" content="Pick a challenge, do it, then find out who won. The rule is locked before you start, so nobody can twist it. A fair, silly family game from BB & Co Imaginations.">
 <link rel="icon" href="../assets/icon.png" type="image/png">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<meta name="theme-color" content="#1F4D3A">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Who Wins?">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
@@ -16,14 +22,19 @@
 html,body{height:100%}
 body{font-family:var(--body);background:var(--paper);color:var(--ink);font-size:17px;line-height:1.5;overflow:hidden}
 button{font:inherit;cursor:pointer}
+.gbrand{display:flex;justify-content:center;padding:10px 12px 0}
+.gbrand a{display:inline-block;background:var(--white);border:3px solid var(--ink);border-radius:999px;padding:6px 14px;line-height:0}
+.gbrand img{height:26px;width:auto;display:block}
+.top .gbrand{padding:0;margin-left:auto;flex:none}
+.top .gbrand a{width:auto;height:auto;border-radius:999px;border-width:2px;padding:4px 10px}.top .gbrand img{height:22px}
 canvas#confetti{position:fixed;inset:0;pointer-events:none;z-index:99}
 .screen{position:fixed;inset:0;display:none;flex-direction:column;overflow-y:auto;-webkit-overflow-scrolling:touch}
 .screen.active{display:flex;animation:in .25s ease}
 @keyframes in{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
 .wrap{width:100%;max-width:520px;margin:0 auto;padding:20px}
 .top{display:flex;align-items:center;gap:12px;padding:14px 20px;border-bottom:3px solid var(--ink);background:var(--paper);position:sticky;top:0;z-index:5}
-.top a,.top button.back{display:inline-flex;align-items:center;justify-content:center;width:40px;height:40px;border-radius:50%;border:3px solid var(--ink);background:var(--white);color:var(--ink);text-decoration:none;font-size:18px}
-.top h2{font-family:var(--display);font-weight:600;font-size:1.3rem;flex:1}
+.top a.back,.top button.back{display:inline-flex;align-items:center;justify-content:center;width:40px;height:40px;border-radius:50%;border:3px solid var(--ink);background:var(--white);color:var(--ink);text-decoration:none;font-size:18px}
+.top h2{font-family:var(--display);font-weight:600;font-size:1.2rem;flex:1;min-width:0;white-space:nowrap}
 h1,h2,h3{font-family:var(--display);font-weight:600;line-height:1.1}
 .btn{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;padding:16px 20px;border-radius:999px;border:3px solid var(--ink);background:var(--white);color:var(--ink);font-family:var(--display);font-weight:600;font-size:1.15rem;transition:transform .12s}
 .btn:active{transform:scale(.97)}
@@ -98,7 +109,7 @@ textarea.challenge:focus{box-shadow:0 0 0 4px var(--sun)}
 /* REVEAL */
 .rev{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;padding:32px 24px;text-align:center;color:var(--white);background:var(--ink);cursor:pointer;user-select:none}
 .rev.m-funny{background:#7A4A00}.rev.m-winning{background:#1F4D3A}.rev.m-dare{background:#8C2A20}.rev.m-chaos{background:#164A78}
-.stage{min-height:40vh;display:flex;align-items:center;justify-content:center;width:100%}
+.stage{min-height:34vh;display:flex;align-items:center;justify-content:center;width:100%}
 .st{font-family:var(--display);font-weight:700;animation:pop .35s cubic-bezier(.34,1.56,.64,1);white-space:pre-line}
 .st.who{font-size:1.9rem;opacity:.9}.st.trig{font-size:4.6rem;color:var(--sun);line-height:.95}.st.verb{font-size:2.2rem;opacity:.75}.st.res{font-size:2.6rem}.st.chaos{font-size:3rem;color:var(--sun)}
 .dots{display:flex;gap:6px}.dot{width:8px;height:8px;border-radius:50%;background:rgba(255,255,255,.3)}.dot.on{background:var(--sun);transform:scale(1.3)}
@@ -138,6 +149,7 @@ textarea.challenge:focus{box-shadow:0 0 0 4px var(--sun)}
 <!-- HOME -->
 <section class="screen active" id="s-home">
   <div class="home">
+    <div class="gbrand" style="padding:0;margin-bottom:-6px"><a href="../games.html" aria-label="BB & Co Imaginations"><img src="../assets/logo-wide.png" alt="BB & Co Imaginations"></a></div>
     <div class="badge">🏆</div>
     <h1>Who <span>Wins?</span></h1>
     <p>Do the challenge first. Find out the rule after. Nobody gets to twist it.</p>
@@ -146,14 +158,20 @@ textarea.challenge:focus{box-shadow:0 0 0 4px var(--sun)}
       <button class="btn btn-coral" onclick="gotoSetup('fresh')">⚡ Quick play</button>
       <button class="btn btn-sun" onclick="surpriseMe()">🎲 Surprise me</button>
       <button class="btn" onclick="go('history')">📜 History</button>
+      <button class="btn btn-ghost" id="installbtn" style="display:none" onclick="installApp()">📲 Add to your phone</button>
     </div>
-    <a class="brand-link" href="../games.html"><img src="../assets/logo-wide.png" alt="">Back to BB &amp; Co Imaginations</a>
+    <div id="iossheet" style="display:none;max-width:320px;text-align:left;background:var(--white);border:3px solid var(--ink);border-radius:18px;padding:16px 18px;font-size:.95rem">
+      <strong style="font-family:var(--display)">Add Who Wins? to your home screen</strong>
+      <ol style="margin:8px 0 0 18px;line-height:1.6" id="iossteps"></ol>
+      <button class="btn-ghost" style="margin-top:6px" onclick="document.getElementById('iossheet').style.display='none'">Close</button>
+    </div>
+    <a class="brand-link" href="../games.html">Back to BB &amp; Co Imaginations</a>
   </div>
 </section>
 
 <!-- SETUP -->
 <section class="screen" id="s-setup">
-  <div class="top"><button class="back" onclick="go('home')">←</button><h2>New round</h2></div>
+  <div class="top"><button class="back" onclick="go('home')">←</button><h2>New round</h2><div class="gbrand"><a href="../games.html" aria-label="BB & Co Imaginations"><img src="../assets/logo-wide.png" alt="BB & Co Imaginations"></a></div></div>
   <div class="wrap">
     <div style="position:relative">
       <textarea id="challenge" class="challenge" rows="2" placeholder="Type a challenge…" oninput="S.challenge=this.value"></textarea>
@@ -186,7 +204,7 @@ textarea.challenge:focus{box-shadow:0 0 0 4px var(--sun)}
 
 <!-- LOCKED -->
 <section class="screen" id="s-locked">
-  <div class="top"><button class="back" onclick="go('setup')">←</button><h2>Rule locked</h2></div>
+  <div class="top"><button class="back" onclick="go('setup')">←</button><h2>Rule locked</h2><div class="gbrand"><a href="../games.html" aria-label="BB & Co Imaginations"><img src="../assets/logo-wide.png" alt="BB & Co Imaginations"></a></div></div>
   <div class="lockwrap">
     <div class="lockicon">🔒</div>
     <div><h1>The rule is chosen</h1><p style="color:var(--ink-soft)">It was picked at random before you start. Nobody can change it now.</p></div>
@@ -206,6 +224,7 @@ textarea.challenge:focus{box-shadow:0 0 0 4px var(--sun)}
 <!-- ACTIVITY -->
 <section class="screen" id="s-activity">
   <div class="act" id="act">
+    <div class="gbrand" style="padding:0"><a href="../games.html" aria-label="BB & Co Imaginations"><img src="../assets/logo-wide.png" alt="BB & Co Imaginations"></a></div>
     <div class="pill" id="a-mode">Funny mode</div>
     <h1 id="a-ch">Run up the stairs</h1>
     <div class="timer">
@@ -221,6 +240,7 @@ textarea.challenge:focus{box-shadow:0 0 0 4px var(--sun)}
 <!-- REVEAL -->
 <section class="screen" id="s-reveal">
   <div class="rev" id="rev" onclick="advance()">
+    <div class="gbrand" style="padding:0" onclick="event.stopPropagation()"><a href="../games.html" aria-label="BB & Co Imaginations"><img src="../assets/logo-wide.png" alt="BB & Co Imaginations"></a></div>
     <div class="stage" id="stage"><div class="st who" id="st-text"></div></div>
     <div class="dots" id="dots"></div>
     <div class="hint" id="hint">tap to hurry</div>
@@ -241,7 +261,7 @@ textarea.challenge:focus{box-shadow:0 0 0 4px var(--sun)}
 
 <!-- HISTORY -->
 <section class="screen" id="s-history">
-  <div class="top"><button class="back" onclick="go('home')">←</button><h2>History</h2></div>
+  <div class="top"><button class="back" onclick="go('home')">←</button><h2>History</h2><div class="gbrand"><a href="../games.html" aria-label="BB & Co Imaginations"><img src="../assets/logo-wide.png" alt="BB & Co Imaginations"></a></div></div>
   <div class="wrap stack" id="hist"></div>
 </section>
 
@@ -392,6 +412,21 @@ function snd(k){const c=ac();if(!c)return;const n=c.currentTime;
 const cv=$('confetti'),cx=cv.getContext('2d');let ps=[],run=false;
 function confetti(){cv.width=innerWidth;cv.height=innerHeight;ps=[];const col=['#EE6352','#FFC93C','#7FB77E','#BFE3F4','#164A78','#E4722F'];for(let i=0;i<120;i++)ps.push({x:Math.random()*cv.width,y:-20-Math.random()*100,w:4+Math.random()*12,h:3+Math.random()*8,c:pick(col),vx:Math.random()*5-2.5,vy:2+Math.random()*4,r:Math.random()*360,rv:Math.random()*12-6,o:1});if(!run){run=true;anim();}}
 function anim(){if(!run)return;cx.clearRect(0,0,cv.width,cv.height);ps=ps.filter(p=>p.o>.01&&p.y<cv.height+20);if(!ps.length){run=false;return;}ps.forEach(p=>{p.x+=p.vx;p.y+=p.vy;p.r+=p.rv;if(p.y>cv.height*.6)p.o-=.018;cx.save();cx.translate(p.x,p.y);cx.rotate(p.r*Math.PI/180);cx.globalAlpha=Math.max(0,p.o);cx.fillStyle=p.c;cx.fillRect(-p.w/2,-p.h/2,p.w,p.h);cx.restore();});requestAnimationFrame(anim);}
+
+/* ---------- INSTALL (add to home screen) ---------- */
+let deferredPrompt=null;
+const standalone=window.matchMedia('(display-mode: standalone)').matches||navigator.standalone===true;
+const isIOS=/iphone|ipad|ipod/i.test(navigator.userAgent)&&!window.MSStream;
+window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();deferredPrompt=e;if(!standalone)$('installbtn').style.display='flex';});
+if(isIOS&&!standalone)$('installbtn').style.display='flex';
+function installApp(){
+  if(deferredPrompt){deferredPrompt.prompt();deferredPrompt.userChoice.then(()=>{deferredPrompt=null;$('installbtn').style.display='none';});return;}
+  const safari=/safari/i.test(navigator.userAgent)&&!/crios|fxios|edgios/i.test(navigator.userAgent);
+  $('iossteps').innerHTML=(safari?['Tap the <strong>Share</strong> button (the square with an arrow) at the bottom of Safari.','Scroll down and tap <strong>Add to Home Screen</strong>.','Tap <strong>Add</strong>. Who Wins? now opens like an app, even offline.']
+    :['Open this page in <strong>Safari</strong> (Apple only allows home-screen apps from Safari).','Tap the <strong>Share</strong> button, then <strong>Add to Home Screen</strong>.','Tap <strong>Add</strong>.']).map(t=>`<li>${t}</li>`).join('');
+  $('iossheet').style.display='block';
+}
+if('serviceWorker'in navigator&&location.protocol==='https:')navigator.serviceWorker.register('sw.js').catch(()=>{});
 
 /* ---------- INIT ---------- */
 paintPlayers();renderCats();renderIdeas();
