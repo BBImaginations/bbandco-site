@@ -87,6 +87,35 @@ h1,h2,h3{font-family:var(--display);font-weight:600;line-height:1.1}
 .who.kid{background:#CFEFC9}.who.help{background:var(--sun)}.who.adult{background:var(--coral);color:var(--white)}
 .stepcard{border:3px solid var(--ink);border-radius:22px;background:var(--white);padding:24px 22px;box-shadow:6px 6px 0 var(--ink);display:flex;flex-direction:column;gap:14px;min-height:260px}
 .stepcard .e{font-size:64px;line-height:1;text-align:center}
+.anim{width:100%;max-width:260px;margin:0 auto;display:block}
+.anim *{stroke-linecap:round;stroke-linejoin:round}
+@keyframes a-spread{0%{transform:translateX(-40px) rotate(-8deg)}50%{transform:translateX(40px) rotate(4deg)}100%{transform:translateX(-40px) rotate(-8deg)}}
+@keyframes a-cut{0%,20%{transform:translateY(-28px)}45%,55%{transform:translateY(0)}80%,100%{transform:translateY(-28px)}}
+@keyframes a-crack{0%,30%{transform:translateY(0)}45%{transform:translateY(-12px)}55%{transform:translateY(0)}100%{transform:translateY(0)}}
+@keyframes a-crackopen{0%,55%{opacity:0}65%,100%{opacity:1}}
+@keyframes a-yolk{0%,55%{transform:translateY(-20px) scale(0)}80%,100%{transform:translateY(0) scale(1)}}
+@keyframes a-whisk{0%{transform:translateX(-14px) rotate(-14deg)}50%{transform:translateX(14px) rotate(14deg)}100%{transform:translateX(-14px) rotate(-14deg)}}
+@keyframes a-pour{0%,10%{transform:rotate(0)}30%,80%{transform:rotate(-40deg)}100%{transform:rotate(0)}}
+@keyframes a-stream{0%,25%{opacity:0;transform:scaleY(0)}35%,75%{opacity:1;transform:scaleY(1)}85%,100%{opacity:0;transform:scaleY(0)}}
+@keyframes a-fall{0%{transform:translateY(0);opacity:1}100%{transform:translateY(60px);opacity:0}}
+@keyframes a-shake{0%,100%{transform:rotate(-6deg)}50%{transform:rotate(6deg)}}
+@keyframes a-stir{0%{transform:rotate(0)}100%{transform:rotate(360deg)}}
+@keyframes a-wave{0%{transform:translateX(0)}100%{transform:translateX(-40px)}}
+@keyframes a-heat{0%,100%{transform:scaleY(1);opacity:.8}50%{transform:scaleY(1.35);opacity:1}}
+@keyframes a-flip{0%,20%{transform:translateY(0) rotate(0)}50%{transform:translateY(-50px) rotate(180deg)}80%,100%{transform:translateY(0) rotate(360deg)}}
+@keyframes a-skewer{0%,15%{transform:translateX(-70px)}70%,100%{transform:translateX(0)}}
+@keyframes a-door{0%,15%{transform:scaleY(1)}50%,65%{transform:scaleY(.1)}100%{transform:scaleY(1)}}
+@keyframes a-scoop{0%{transform:translate(20px,20px) rotate(20deg)}50%{transform:translate(-30px,-30px) rotate(-30deg)}100%{transform:translate(20px,20px) rotate(20deg)}}
+@keyframes a-bubble{0%{transform:translateY(0) scale(.4);opacity:0}30%{opacity:1}100%{transform:translateY(-40px) scale(1);opacity:0}}
+.photo-wrap{width:100%;max-width:520px}
+.photo-btn{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;padding:14px;border:3px dashed var(--ink);border-radius:18px;background:var(--white);font-family:var(--display);font-weight:600;font-size:1.05rem}
+.photo-prev{width:100%;border:3px solid var(--ink);border-radius:18px;overflow:hidden;box-shadow:6px 6px 0 var(--ink);background:var(--white)}
+.photo-prev img{width:100%;display:block;max-height:260px;object-fit:cover}
+.stamp img{width:56px;height:56px;object-fit:cover;border:3px solid var(--ink);border-radius:12px}
+.lightbox{position:fixed;inset:0;background:rgba(31,77,58,.92);z-index:60;display:none;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:20px}
+.lightbox.show{display:flex}
+.lightbox img{max-width:100%;max-height:70vh;border:4px solid var(--white);border-radius:16px}
+.lightbox .btn{max-width:320px}
 .stepcard .t{font-family:var(--display);font-weight:600;font-size:1.5rem;line-height:1.2;text-align:center}
 .stepcard .tip{font-size:.95rem;color:var(--ink-soft);text-align:center}
 .dots{display:flex;gap:6px;justify-content:center;flex-wrap:wrap;margin:14px 0}
@@ -111,6 +140,11 @@ h1,h2,h3{font-family:var(--display);font-weight:600;line-height:1.1}
 </head>
 <body>
 <canvas id="confetti"></canvas>
+<div class="lightbox" id="lightbox" onclick="this.classList.remove('show')">
+  <img id="lb-img" alt="Your dish">
+  <button class="btn" onclick="event.stopPropagation();savePhoto()">⬇️ Save to camera roll</button>
+  <button class="btn-ghost" style="color:#fff">Close</button>
+</div>
 
 <!-- HOME -->
 <section class="screen active" id="s-home">
@@ -202,6 +236,10 @@ h1,h2,h3{font-family:var(--display);font-weight:600;line-height:1.1}
       <button class="star" onclick="setStars(2,this)"><span class="s">⭐⭐</span>Made with a little help</button>
       <button class="star" onclick="setStars(3,this)"><span class="s">⭐⭐⭐</span>Almost by myself</button>
     </div>
+    <div class="photo-wrap" id="c-photo">
+      <label class="photo-btn">📸 Take a photo of what you made<input type="file" accept="image/*" capture="environment" style="display:none" onchange="gotPhoto(this)"></label>
+    </div>
+    <p class="note" style="text-align:left;font-size:.8rem">Photos stay on this device only. They are never uploaded.</p>
     <button class="btn btn-ink" id="c-btn" disabled onclick="stampAndReset()">Stamp my passport 📖</button>
   </div>
 </section>
@@ -234,36 +272,55 @@ const RECIPES=[
 {id:'sandwich',name:'Make a sandwich',emoji:'🥪',level:1,time:'10 min',badge:'Sandwich Star',line:'You built a real sandwich, all by your own hands!',
  needs:[{n:'Bread',e:'🍞'},{n:'Butter or spread',e:'🧈'},{n:'Filling (cheese, ham or jam)',e:'🧀'},{n:'Plate',e:'🍽️'},{n:'Butter knife',e:'🔪'}],
  decoys:[{n:'Frying pan',e:'🍳'},{n:'Ice cubes',e:'🧊'},{n:'Whisk',e:'🥄'},{n:'Oven',e:'♨️'}],
- steps:[{t:'Put two slices of bread on the plate.',e:'🍞',who:'kid'},{t:'Spread butter on one side of each slice, right to the edges.',e:'🧈',who:'kid',tip:'A blunt butter knife is perfect for this.'},{t:'Lay your filling on one slice.',e:'🧀',who:'kid'},{t:'Pop the other slice on top, butter side down.',e:'🥪',who:'kid'},{t:'Cut it in half. Triangles or squares?',e:'🔪',who:'help',tip:'Grown-up holds the knife; you choose the shape.'},{t:'Onto the plate and… ta-da!',e:'🎉',who:'kid'}]},
+ steps:[{t:'Put two slices of bread on the plate.',e:'🍞',who:'kid'},{t:'Spread butter on one side of each slice, right to the edges.',e:'🧈',anim:'spread',who:'kid',tip:'A blunt butter knife is perfect for this.'},{t:'Lay your filling on one slice.',e:'🧀',who:'kid'},{t:'Pop the other slice on top, butter side down.',e:'🥪',who:'kid'},{t:'Cut it in half. Triangles or squares?',e:'🔪',anim:'cut',who:'help',tip:'Grown-up holds the knife; you choose the shape.'},{t:'Onto the plate and… ta-da!',e:'🎉',who:'kid'}]},
 
 {id:'fruitbowl',name:'Fruit & yoghurt bowl',emoji:'🍓',level:1,time:'10 min',badge:'Fruit Explorer',line:'A rainbow bowl, made by you!',
  needs:[{n:'Yoghurt',e:'🥣'},{n:'Soft fruit (banana, berries)',e:'🍌'},{n:'Bowl',e:'🥣'},{n:'Spoon',e:'🥄'},{n:'Butter knife',e:'🔪'}],
  decoys:[{n:'Saucepan',e:'🥘'},{n:'Ketchup',e:'🍅'},{n:'Rolling pin',e:'🪵'},{n:'Cheese grater',e:'🧀'}],
- steps:[{t:'Spoon yoghurt into the bowl. Fill it about halfway.',e:'🥣',who:'kid'},{t:'Peel the banana.',e:'🍌',who:'kid'},{t:'Slice the banana into coins with a butter knife.',e:'🔪',who:'help',tip:'Fingers behind the knife, slow and steady.'},{t:'Rinse the berries in a sieve or colander.',e:'💧',who:'kid'},{t:'Arrange the fruit on top. Make a face, a rainbow or a pattern!',e:'🌈',who:'kid'},{t:'Sprinkle something crunchy if you like: seeds, oats or cereal.',e:'✨',who:'kid'}]},
+ steps:[{t:'Spoon yoghurt into the bowl. Fill it about halfway.',e:'🥣',anim:'scoop',who:'kid'},{t:'Peel the banana.',e:'🍌',who:'kid'},{t:'Slice the banana into coins with a butter knife.',e:'🔪',anim:'cut',who:'help',tip:'Fingers behind the knife, slow and steady.'},{t:'Rinse the berries in a sieve or colander.',e:'💧',anim:'wash',who:'kid'},{t:'Arrange the fruit on top. Make a face, a rainbow or a pattern!',e:'🌈',who:'kid'},{t:'Sprinkle something crunchy if you like: seeds, oats or cereal.',e:'✨',anim:'sprinkle',who:'kid'}]},
 
 {id:'kebabs',name:'Fruit kebabs',emoji:'🍢',level:1,time:'15 min',badge:'Kebab Captain',line:'Fruit on a stick: the best kind of fruit!',
  needs:[{n:'3 kinds of fruit',e:'🍇'},{n:'Wooden skewers or straws',e:'🥢'},{n:'Chopping board',e:'🟫'},{n:'Butter knife',e:'🔪'},{n:'Plate',e:'🍽️'}],
  decoys:[{n:'Frying pan',e:'🍳'},{n:'Flour',e:'🌾'},{n:'Oven gloves',e:'🧤'},{n:'Salt',e:'🧂'}],
- steps:[{t:'Wash the fruit and pat it dry.',e:'💧',who:'kid'},{t:'Cut big fruit into bite-size chunks.',e:'🔪',who:'help',tip:'Grown-up cuts anything hard; you cut soft fruit like banana with the butter knife.'},{t:'Choose a pattern: red, yellow, green, red, yellow, green…',e:'🌈',who:'kid'},{t:'Push the fruit onto the skewer, one piece at a time.',e:'🍢',who:'help',tip:'Skewers are pointy. A grown-up holds the pointy end, or use a paper straw.'},{t:'Line them up on the plate like little rainbows.',e:'🍽️',who:'kid'},{t:'Squeeze a little lime or orange juice over the top for sparkle.',e:'🍋',who:'kid'}]},
+ steps:[{t:'Wash the fruit and pat it dry.',e:'💧',anim:'wash',who:'kid'},{t:'Cut big fruit into bite-size chunks.',e:'🔪',anim:'cut',who:'help',tip:'Grown-up cuts anything hard; you cut soft fruit like banana with the butter knife.'},{t:'Choose a pattern: red, yellow, green, red, yellow, green…',e:'🌈',who:'kid'},{t:'Push the fruit onto the skewer, one piece at a time.',e:'🍢',anim:'skewer',who:'help',tip:'Skewers are pointy. A grown-up holds the pointy end, or use a paper straw.'},{t:'Line them up on the plate like little rainbows.',e:'🍽️',who:'kid'},{t:'Squeeze a little lime or orange juice over the top for sparkle.',e:'🍋',who:'kid'}]},
 
 {id:'eggs',name:'Scrambled eggs',emoji:'🍳',level:2,time:'15 min',badge:'Egg-cellent Chef',line:'You cracked it. Literally!',
  needs:[{n:'2 eggs',e:'🥚'},{n:'Splash of milk',e:'🥛'},{n:'Small knob of butter',e:'🧈'},{n:'Bowl',e:'🥣'},{n:'Fork or whisk',e:'🍴'},{n:'Frying pan',e:'🍳'},{n:'Wooden spoon',e:'🥄'}],
  decoys:[{n:'Rolling pin',e:'🪵'},{n:'Ice cream',e:'🍦'},{n:'Skewers',e:'🥢'}],
- steps:[{t:'Crack the eggs into the bowl. Tap, tap, open!',e:'🥚',who:'kid',tip:'Crack on the flat counter, not the bowl edge. Fish out any shell with a spoon.'},{t:'Add a splash of milk and a tiny pinch of salt.',e:'🥛',who:'kid'},{t:'Whisk until it is all one yellow colour.',e:'🍴',who:'kid'},{t:'Grown-up heats the pan on low and melts the butter.',e:'🔥',who:'adult'},{t:'Grown-up pours the egg in. Watch it start to set at the edges.',e:'🍳',who:'adult'},{t:'Stir slowly with the wooden spoon, grown-up holding the pan.',e:'🥄',who:'help',tip:'Stand back from the hob. Slow stirring makes soft eggs.'},{t:'Grown-up takes it off the heat while it is still a bit glossy, and spoons it onto your plate.',e:'🍽️',who:'adult'}]},
+ steps:[{t:'Crack the eggs into the bowl. Tap, tap, open!',e:'🥚',anim:'crack',who:'kid',tip:'Crack on the flat counter, not the bowl edge. Fish out any shell with a spoon.'},{t:'Add a splash of milk and a tiny pinch of salt.',e:'🥛',anim:'pour',who:'kid'},{t:'Whisk until it is all one yellow colour.',e:'🍴',anim:'whisk',who:'kid'},{t:'Grown-up heats the pan on low and melts the butter.',e:'🔥',anim:'heat',who:'adult'},{t:'Grown-up pours the egg in. Watch it start to set at the edges.',e:'🍳',anim:'pour',who:'adult'},{t:'Stir slowly with the wooden spoon, grown-up holding the pan.',e:'🥄',anim:'stir',who:'help',tip:'Stand back from the hob. Slow stirring makes soft eggs.'},{t:'Grown-up takes it off the heat while it is still a bit glossy, and spoons it onto your plate.',e:'🍽️',who:'adult'}]},
 
 {id:'pancakes',name:'Pancakes',emoji:'🥞',level:2,time:'25 min',badge:'Pancake Pro',line:'Flip-tastic! Real pancakes, made by you.',
  needs:[{n:'Flour (1 cup)',e:'🌾'},{n:'Milk (1 cup)',e:'🥛'},{n:'1 egg',e:'🥚'},{n:'Butter or oil',e:'🧈'},{n:'Mixing bowl',e:'🥣'},{n:'Whisk',e:'🥄'},{n:'Frying pan',e:'🍳'},{n:'Measuring cup',e:'🥤'}],
  decoys:[{n:'Cheese grater',e:'🧀'},{n:'Ice cubes',e:'🧊'},{n:'Potato masher',e:'🥔'}],
- steps:[{t:'Measure the flour into the bowl.',e:'🌾',who:'kid',tip:'Level the cup with the back of a knife.'},{t:'Crack in the egg. Tap, tap, open!',e:'🥚',who:'kid'},{t:'Pour in the milk, a bit at a time.',e:'🥛',who:'kid'},{t:'Whisk until smooth, no lumps. Count to 30!',e:'🥄',who:'kid'},{t:'Grown-up heats the pan and adds a little butter.',e:'🔥',who:'adult'},{t:'Grown-up pours a small ladle of batter into the pan.',e:'🍳',who:'adult'},{t:'Watch for bubbles on top. Bubbles mean it is time to flip. Shout "FLIP!"',e:'🫧',who:'kid'},{t:'Grown-up flips it and cooks the other side.',e:'🥞',who:'adult'},{t:'Stack them up and add your toppings.',e:'🍓',who:'kid'}]},
+ steps:[{t:'Measure the flour into the bowl.',e:'🌾',anim:'pour',who:'kid',tip:'Level the cup with the back of a knife.'},{t:'Crack in the egg. Tap, tap, open!',e:'🥚',anim:'crack',who:'kid'},{t:'Pour in the milk, a bit at a time.',e:'🥛',anim:'pour',who:'kid'},{t:'Whisk until smooth, no lumps. Count to 30!',e:'🥄',anim:'whisk',who:'kid'},{t:'Grown-up heats the pan and adds a little butter.',e:'🔥',anim:'heat',who:'adult'},{t:'Grown-up pours a small ladle of batter into the pan.',e:'🍳',anim:'pour',who:'adult'},{t:'Watch for bubbles on top. Bubbles mean it is time to flip. Shout "FLIP!"',e:'🫧',who:'kid'},{t:'Grown-up flips it and cooks the other side.',e:'🥞',anim:'flip',who:'adult'},{t:'Stack them up and add your toppings.',e:'🍓',who:'kid'}]},
 
 {id:'pizza',name:'Pitta pizza',emoji:'🍕',level:3,time:'20 min',badge:'Pizza Maker',line:'Your very own pizza. Chef\u2019s kiss!',
  needs:[{n:'Pitta or flatbread',e:'🫓'},{n:'Tomato passata or purée',e:'🍅'},{n:'Grated cheese',e:'🧀'},{n:'Toppings (peppers, sweetcorn, ham)',e:'🫑'},{n:'Spoon',e:'🥄'},{n:'Baking tray',e:'🟫'},{n:'Oven gloves',e:'🧤'}],
  decoys:[{n:'Whisk',e:'🥄'},{n:'Ice cubes',e:'🧊'},{n:'Yoghurt',e:'🥣'}],
- steps:[{t:'Grown-up turns the oven on to 200°C (fan 180°C).',e:'♨️',who:'adult'},{t:'Put the pitta on the baking tray.',e:'🫓',who:'kid'},{t:'Spoon tomato sauce on and spread it out like paint. Leave a little edge.',e:'🍅',who:'kid'},{t:'Sprinkle cheese all over. Snow!',e:'🧀',who:'kid'},{t:'Add your toppings. Make a face if you like.',e:'🫑',who:'kid',tip:'Grown-up chops anything that needs chopping.'},{t:'Grown-up puts the tray in the oven for about 8 minutes.',e:'🔥',who:'adult'},{t:'Grown-up takes it out with oven gloves and lets it cool for two minutes.',e:'🧤',who:'adult',tip:'Cheese stays hot longer than it looks.'},{t:'Grown-up slices it. You choose how many pieces.',e:'🔪',who:'help'}]}
+ steps:[{t:'Grown-up turns the oven on to 200°C (fan 180°C).',e:'♨️',anim:'oven',who:'adult'},{t:'Put the pitta on the baking tray.',e:'🫓',who:'kid'},{t:'Spoon tomato sauce on and spread it out like paint. Leave a little edge.',e:'🍅',anim:'spread',who:'kid'},{t:'Sprinkle cheese all over. Snow!',e:'🧀',anim:'sprinkle',who:'kid'},{t:'Add your toppings. Make a face if you like.',e:'🫑',who:'kid',tip:'Grown-up chops anything that needs chopping.'},{t:'Grown-up puts the tray in the oven for about 8 minutes.',e:'🔥',anim:'oven',who:'adult'},{t:'Grown-up takes it out with oven gloves and lets it cool for two minutes.',e:'🧤',who:'adult',tip:'Cheese stays hot longer than it looks.'},{t:'Grown-up slices it. You choose how many pieces.',e:'🔪',anim:'cut',who:'help'}]}
 ];
 const LEVELS={1:{n:'Level 1 · No heat',s:'Assembling and preparing'},2:{n:'Level 2 · Mix & make',s:'Measuring, pouring, cracking, mixing'},3:{n:'Level 3 · Cook with a grown-up',s:'Heat and more advanced prep'}};
 const RESETS=['Can you put three things back where they belong?','Take your plate to the sink.','Help wipe your workspace with a cloth.','Put the spoons and forks back in the drawer.','Find the lid for every tub you used.','Wipe up any crumbs you can spot.'];
 const WHO={kid:['🟢','I can do this'],help:['🟡','Grown-up helps'],adult:['🔴','Grown-up does this']};
+
+
+/* ---------- STEP ANIMATIONS (flat SVG, brand colours) ---------- */
+const A={
+spread:`<rect x="30" y="60" width="140" height="40" rx="8" fill="#E9C48A" stroke="#1F4D3A" stroke-width="4"/><rect x="40" y="64" width="120" height="14" rx="6" fill="#FFC93C"/><g style="animation:a-spread 1.6s ease-in-out infinite;transform-origin:100px 60px"><rect x="86" y="18" width="28" height="44" rx="6" fill="#fff" stroke="#1F4D3A" stroke-width="4"/><rect x="92" y="6" width="16" height="18" rx="4" fill="#1F4D3A"/></g>`,
+cut:`<rect x="30" y="70" width="140" height="34" rx="8" fill="#E9C48A" stroke="#1F4D3A" stroke-width="4"/><g style="animation:a-cut 1.8s ease-in-out infinite"><path d="M100 30 L100 88" stroke="#1F4D3A" stroke-width="5"/><path d="M92 88 L108 88 L100 100 Z" fill="#fff" stroke="#1F4D3A" stroke-width="4"/><rect x="94" y="18" width="12" height="16" rx="3" fill="#EE6352"/></g>`,
+crack:`<path d="M40 80 Q100 130 160 80 Z" fill="#BFE3F4" stroke="#1F4D3A" stroke-width="4"/><g style="animation:a-crack 2s ease-in-out infinite"><ellipse cx="100" cy="46" rx="22" ry="28" fill="#fff" stroke="#1F4D3A" stroke-width="4"/><path d="M80 52 l8 6 8 -6 8 6 8 -6 8 6" fill="none" stroke="#1F4D3A" stroke-width="3" style="animation:a-crackopen 2s infinite"/></g><circle cx="100" cy="86" r="10" fill="#FFC93C" stroke="#1F4D3A" stroke-width="3" style="animation:a-yolk 2s infinite;transform-origin:100px 86px"/>`,
+whisk:`<path d="M40 70 Q100 130 160 70 Z" fill="#BFE3F4" stroke="#1F4D3A" stroke-width="4"/><path d="M50 70 H150" stroke="#FFC93C" stroke-width="8"/><g style="animation:a-whisk 1s ease-in-out infinite;transform-origin:100px 30px"><rect x="96" y="6" width="8" height="40" rx="4" fill="#1F4D3A"/><path d="M100 44 q-18 20 0 44 q18 -24 0 -44 M100 44 q-8 22 0 44 M100 44 q8 22 0 44" fill="none" stroke="#1F4D3A" stroke-width="3"/></g>`,
+pour:`<path d="M60 80 Q100 120 140 80 Z" fill="#BFE3F4" stroke="#1F4D3A" stroke-width="4"/><g style="animation:a-pour 2.4s ease-in-out infinite;transform-origin:52px 60px"><rect x="20" y="20" width="44" height="46" rx="8" fill="#fff" stroke="#1F4D3A" stroke-width="4"/><path d="M64 26 h10" stroke="#1F4D3A" stroke-width="4"/></g><rect x="74" y="26" width="8" height="54" rx="4" fill="#FFC93C" style="animation:a-stream 2.4s infinite;transform-origin:78px 26px"/>`,
+sprinkle:`<path d="M40 76 Q100 126 160 76 Z" fill="#E9C48A" stroke="#1F4D3A" stroke-width="4"/><g style="animation:a-shake .8s ease-in-out infinite;transform-origin:100px 20px"><path d="M84 24 L116 24 L108 44 L92 44 Z" fill="#FFC93C" stroke="#1F4D3A" stroke-width="4"/></g><g fill="#EE6352"><circle cx="90" cy="46" r="4" style="animation:a-fall 1.2s linear infinite"/><circle cx="100" cy="46" r="4" style="animation:a-fall 1.2s .4s linear infinite"/><circle cx="110" cy="46" r="4" style="animation:a-fall 1.2s .8s linear infinite"/></g>`,
+stir:`<circle cx="100" cy="70" r="46" fill="#1F4D3A"/><circle cx="100" cy="70" r="38" fill="#FFC93C"/><path d="M40 70 h-24" stroke="#1F4D3A" stroke-width="8"/><g style="animation:a-stir 1.6s linear infinite;transform-origin:100px 70px"><rect x="96" y="28" width="8" height="46" rx="4" fill="#E9C48A" stroke="#1F4D3A" stroke-width="3"/></g>`,
+wash:`<path d="M40 60 Q100 110 160 60 Z" fill="#fff" stroke="#1F4D3A" stroke-width="4"/><path d="M52 60 H148" stroke="#BFE3F4" stroke-width="10"/><g fill="#EE6352"><circle cx="80" cy="60" r="10"/><circle cx="104" cy="58" r="10"/><circle cx="124" cy="62" r="9"/></g><g fill="#BFE3F4" stroke="#1F4D3A" stroke-width="2"><circle cx="70" cy="40" r="5" style="animation:a-bubble 1.6s infinite"/><circle cx="100" cy="36" r="6" style="animation:a-bubble 1.6s .5s infinite"/><circle cx="130" cy="42" r="4" style="animation:a-bubble 1.6s 1s infinite"/></g>`,
+heat:`<rect x="40" y="70" width="120" height="14" rx="6" fill="#1F4D3A"/><path d="M160 76 h30" stroke="#1F4D3A" stroke-width="8"/><g style="transform-origin:100px 110px"><path d="M70 110 q6 -18 12 0 M92 110 q8 -26 16 0 M120 110 q6 -18 12 0" fill="#EE6352" stroke="#EE6352" stroke-width="4" style="animation:a-heat .7s ease-in-out infinite;transform-origin:100px 110px"/></g><text x="100" y="60" text-anchor="middle" font-size="26">🔴</text>`,
+flip:`<rect x="40" y="86" width="120" height="14" rx="6" fill="#1F4D3A"/><path d="M160 92 h30" stroke="#1F4D3A" stroke-width="8"/><ellipse cx="100" cy="82" rx="36" ry="10" fill="#FFC93C" stroke="#1F4D3A" stroke-width="4" style="animation:a-flip 2.2s ease-in-out infinite;transform-origin:100px 82px"/>`,
+skewer:`<g style="animation:a-skewer 2.2s ease-in-out infinite"><rect x="20" y="66" width="150" height="6" rx="3" fill="#E9C48A" stroke="#1F4D3A" stroke-width="3"/></g><g stroke="#1F4D3A" stroke-width="4"><circle cx="70" cy="69" r="16" fill="#EE6352"/><rect x="96" y="53" width="30" height="32" rx="6" fill="#FFC93C"/><circle cx="150" cy="69" r="16" fill="#7FB77E"/></g>`,
+oven:`<rect x="40" y="20" width="120" height="90" rx="10" fill="#fff" stroke="#1F4D3A" stroke-width="4"/><rect x="52" y="44" width="96" height="54" rx="6" fill="#1F4D3A"/><rect x="60" y="52" width="80" height="38" rx="4" fill="#EE6352" style="animation:a-door 2.4s ease-in-out infinite;transform-origin:100px 90px"/><circle cx="60" cy="32" r="4" fill="#1F4D3A"/><circle cx="76" cy="32" r="4" fill="#1F4D3A"/>`,
+scoop:`<path d="M40 76 Q100 126 160 76 Z" fill="#fff" stroke="#1F4D3A" stroke-width="4"/><path d="M52 76 H148" stroke="#BFE3F4" stroke-width="10"/><g style="animation:a-scoop 1.8s ease-in-out infinite;transform-origin:100px 60px"><rect x="96" y="10" width="8" height="44" rx="4" fill="#1F4D3A"/><ellipse cx="100" cy="62" rx="16" ry="10" fill="#E9C48A" stroke="#1F4D3A" stroke-width="3"/></g>`
+};
+function animSVG(k){return A[k]?`<svg class="anim" viewBox="0 0 200 120" aria-hidden="true">${A[k]}</svg>`:'';}
 
 /* ---------- STATE ---------- */
 const S={r:null,picked:new Set(),found:new Set(),step:0,stars:0,ready:0};
@@ -310,24 +367,41 @@ function tickReady(el){el.classList.toggle('on');el.querySelector('.box').textCo
 function startMake(){S.step=0;$('m-title').textContent=S.r.name;snd('go');paintStep();go('make');}
 function paintStep(){const r=S.r,s=r.steps[S.step],w=WHO[s.who];
   $('m-dots').innerHTML=r.steps.map((_,i)=>`<span class="dot ${i<S.step?'done':i===S.step?'on':''}"></span>`).join('');
-  $('m-card').innerHTML=`<div style="text-align:center"><span class="who ${s.who}">${w[0]} ${w[1]}</span></div><div class="e">${s.e}</div><div class="t">${s.t}</div>${s.tip?`<div class="tip">💡 ${s.tip}</div>`:''}<div class="tip" style="margin-top:auto">Step ${S.step+1} of ${r.steps.length}</div>`;
+  $('m-card').innerHTML=`<div style="text-align:center"><span class="who ${s.who}">${w[0]} ${w[1]}</span></div>${s.anim?animSVG(s.anim):`<div class="e">${s.e}</div>`}<div class="t">${s.t}</div>${s.tip?`<div class="tip">💡 ${s.tip}</div>`:''}<div class="tip" style="margin-top:auto">Step ${S.step+1} of ${r.steps.length}</div>`;
   $('m-prev').style.visibility=S.step?'visible':'hidden';$('m-next').textContent=S.step===r.steps.length-1?'All done! 🎉':'Done, next →';}
 function stepTo(d){S.step+=d;if(S.step>=S.r.steps.length){celebrate();return;}if(S.step<0)S.step=0;snd(d>0?'pick':'click');paintStep();}
 
 /* ---------- CELEBRATE ---------- */
-function celebrate(){const r=S.r;$('c-medal').textContent=r.emoji;$('c-badge').textContent=r.badge;$('c-line').textContent=r.line;S.stars=0;document.querySelectorAll('.star').forEach(s=>s.classList.remove('on'));$('c-btn').disabled=true;go('celebrate');snd('fanfare');setTimeout(confetti,200);}
+function celebrate(){pendingPhoto=null;$('c-photo').innerHTML=`<label class="photo-btn">📸 Take a photo of what you made<input type="file" accept="image/*" capture="environment" style="display:none" onchange="gotPhoto(this)"></label>`;const r=S.r;$('c-medal').textContent=r.emoji;$('c-badge').textContent=r.badge;$('c-line').textContent=r.line;S.stars=0;document.querySelectorAll('.star').forEach(s=>s.classList.remove('on'));$('c-btn').disabled=true;go('celebrate');snd('fanfare');setTimeout(confetti,200);}
 function setStars(n,el){S.stars=n;document.querySelectorAll('.star').forEach(s=>s.classList.remove('on'));el.classList.add('on');$('c-btn').disabled=false;snd('pick');}
-function stampAndReset(){const pp=loadPassport();pp.unshift({id:S.r.id,stars:S.stars,at:new Date().toISOString()});try{localStorage.setItem('bbco_littlecook',JSON.stringify(pp.slice(0,200)));}catch(e){}
+function stampAndReset(){const pp=loadPassport();const at=new Date().toISOString();pp.unshift({id:S.r.id,stars:S.stars,at,photo:!!pendingPhoto});if(pendingPhoto){putPhoto(at,pendingPhoto);pendingPhoto=null;}try{localStorage.setItem('bbco_littlecook',JSON.stringify(pp.slice(0,200)));}catch(e){}
   $('x-task').textContent=pick(RESETS);snd('lock');go('reset');}
 function finishAll(){snd('fanfare');confetti();setTimeout(()=>go('passport'),600);}
+
+
+/* ---------- PHOTOS (on-device only, IndexedDB) ---------- */
+let dbP=null;
+function db(){if(dbP)return dbP;dbP=new Promise((res,rej)=>{const r=indexedDB.open('bbco_littlecook',1);r.onupgradeneeded=()=>r.result.createObjectStore('photos');r.onsuccess=()=>res(r.result);r.onerror=()=>rej(r.error);});return dbP;}
+async function putPhoto(key,blob){try{const d=await db();await new Promise((res,rej)=>{const t=d.transaction('photos','readwrite');t.objectStore('photos').put(blob,key);t.oncomplete=res;t.onerror=()=>rej(t.error);});}catch(e){}}
+async function getPhoto(key){try{const d=await db();return await new Promise((res,rej)=>{const t=d.transaction('photos').objectStore('photos').get(key);t.onsuccess=()=>res(t.result||null);t.onerror=()=>rej(t.error);});}catch(e){return null;}}
+async function clearPhotos(){try{const d=await db();d.transaction('photos','readwrite').objectStore('photos').clear();}catch(e){}}
+let pendingPhoto=null;
+function gotPhoto(inp){const f=inp.files&&inp.files[0];if(!f)return;const img=new Image();const url=URL.createObjectURL(f);img.onload=()=>{const max=900;let w=img.width,h=img.height;const sc=Math.min(1,max/Math.max(w,h));w=Math.round(w*sc);h=Math.round(h*sc);const c=document.createElement('canvas');c.width=w;c.height=h;c.getContext('2d').drawImage(img,0,0,w,h);
+  c.toBlob(b=>{pendingPhoto=b;URL.revokeObjectURL(url);$('c-photo').innerHTML=`<div class="photo-prev"><img src="${URL.createObjectURL(b)}" alt="Your dish"></div><label class="photo-btn" style="margin-top:10px;border-style:solid">📸 Retake<input type="file" accept="image/*" capture="environment" style="display:none" onchange="gotPhoto(this)"></label>`;snd('pick');},'image/jpeg',.78);};img.src=url;}
+let lbBlob=null;
+async function openPhoto(key){const b=await getPhoto(key);if(!b)return;lbBlob=b;$('lb-img').src=URL.createObjectURL(b);$('lightbox').classList.add('show');}
+async function savePhoto(){if(!lbBlob)return;const file=new File([lbBlob],'little-cook.jpg',{type:'image/jpeg'});
+  if(navigator.canShare&&navigator.canShare({files:[file]})){try{await navigator.share({files:[file],title:'Little Cook'});return;}catch(e){}}
+  const a=document.createElement('a');a.href=URL.createObjectURL(lbBlob);a.download='little-cook.jpg';a.click();}
 
 /* ---------- PASSPORT ---------- */
 function loadPassport(){try{return JSON.parse(localStorage.getItem('bbco_littlecook')||'[]');}catch(e){return[];}}
 function paintCount(){const n=loadPassport().length;$('pp-count').textContent=n?`(${n})`:'';}
-function renderPassport(){const pp=loadPassport(),el=$('pp-list');if(!pp.length){el.innerHTML='<div class="empty">📖<br>No stamps yet. Cook something and come back!</div>';return;}
+async function renderPassport(){const pp=loadPassport(),el=$('pp-list');if(!pp.length){el.innerHTML='<div class="empty">📖<br>No stamps yet. Cook something and come back!</div>';return;}
   const by={};pp.forEach(p=>{by[p.id]=by[p.id]||[];by[p.id].push(p);});
-  el.innerHTML=`<p class="lede">${pp.length} thing${pp.length>1?'s':''} cooked. Look how you're growing!</p>`+RECIPES.filter(r=>by[r.id]).map(r=>{const l=by[r.id];const best=Math.max(...l.map(p=>p.stars));return `<div class="stamp"><span class="e">${r.emoji}</span><div style="flex:1"><div class="n">${r.badge}</div><div class="m">${r.name} · made ${l.length}× · best ${'⭐'.repeat(best)}</div></div></div>`;}).join('')
-  +`<button class="btn-ghost" onclick="if(confirm('Clear the passport?')){localStorage.removeItem('bbco_littlecook');renderPassport();}">Clear passport</button>`;}
+  el.innerHTML=`<p class="lede">${pp.length} thing${pp.length>1?'s':''} cooked. Look how you're growing!</p>`+RECIPES.filter(r=>by[r.id]).map(r=>{const l=by[r.id];const best=Math.max(...l.map(p=>p.stars));const ph=l.find(p=>p.photo);return `<div class="stamp">${ph?`<img id="ph-${ph.at}" src="" alt="" onclick="openPhoto('${ph.at}')">`:`<span class="e">${r.emoji}</span>`}<div style="flex:1"><div class="n">${r.badge}</div><div class="m">${r.name} · made ${l.length}× · best ${'⭐'.repeat(best)}</div></div></div>`;}).join('')
+  +`<button class="btn-ghost" onclick="if(confirm('Clear the passport and its photos?')){localStorage.removeItem('bbco_littlecook');clearPhotos();renderPassport();}">Clear passport</button>`;
+  for(const p of pp.filter(p=>p.photo)){const img=document.getElementById('ph-'+p.at);if(!img)continue;const b=await getPhoto(p.at);if(b)img.src=URL.createObjectURL(b);else img.replaceWith(Object.assign(document.createElement('span'),{className:'e',textContent:(RECIPES.find(r=>r.id===p.id)||{}).emoji||'🍽️'}));}}
 
 /* ---------- SOUND ---------- */
 let AC=null;function ac(){if(!AC){try{AC=new(window.AudioContext||window.webkitAudioContext)();}catch(e){}}if(AC&&AC.state==='suspended')AC.resume();return AC;}
