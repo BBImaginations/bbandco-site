@@ -50,6 +50,7 @@ h1,h2,h3{font-family:var(--display);font-weight:600;line-height:1.1}
 @keyframes float{50%{transform:translateY(-10px)}}
 .home h1{font-size:clamp(2.6rem,12vw,4rem);color:var(--ink)}
 .home h1 span{color:var(--coral)}
+.home>*{max-width:520px}
 .home p{max-width:30ch;color:var(--ink);font-weight:600}
 .home .stack{width:100%;max-width:320px}
 .brand-link{font-size:.85rem;color:var(--ink-soft);text-decoration:none;font-weight:700}
@@ -62,6 +63,7 @@ textarea.challenge:focus{box-shadow:0 0 0 4px var(--sun)}
 .chips::-webkit-scrollbar{display:none}
 .chip{flex:none;padding:9px 14px;border-radius:999px;border:3px solid var(--ink);background:var(--white);font-family:var(--display);font-weight:500;font-size:.95rem;white-space:nowrap}
 .chip.on,.chip:active{background:var(--ink);color:var(--white)}
+.chip.picked{background:var(--leaf);border-color:var(--ink)}
 .chip.dash{border-style:dashed;color:var(--ink-soft)}
 .modes{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 .mode{padding:16px 10px;border-radius:18px;border:3px solid var(--ink);background:var(--white);text-align:center;display:flex;flex-direction:column;gap:6px;align-items:center}
@@ -83,7 +85,7 @@ textarea.challenge:focus{box-shadow:0 0 0 4px var(--sun)}
 .safe{font-size:.8rem;color:var(--ink-soft);padding:10px 14px;border-left:4px solid var(--sun);background:var(--white);border-radius:0 10px 10px 0}
 .sticky{position:sticky;bottom:0;padding:12px 20px 20px;background:linear-gradient(transparent,var(--paper) 40%)}
 /* LOCKED */
-.lockwrap{flex:1;display:flex;flex-direction:column;align-items:center;gap:18px;padding:28px 20px;text-align:center}
+.lockwrap{flex:1;display:flex;flex-direction:column;align-items:center;gap:18px;padding:28px 20px;text-align:center;width:100%;max-width:560px;margin:0 auto}
 .lockicon{width:80px;height:80px;border-radius:50%;background:var(--ink);color:var(--white);display:flex;align-items:center;justify-content:center;font-size:36px;animation:pop .45s cubic-bezier(.34,1.56,.64,1)}
 @keyframes pop{from{transform:scale(0) rotate(-15deg)}}
 .card{width:100%;border:3px solid var(--ink);border-radius:18px;background:var(--white);overflow:hidden;text-align:left;box-shadow:6px 6px 0 var(--ink)}
@@ -96,7 +98,8 @@ textarea.challenge:focus{box-shadow:0 0 0 4px var(--sun)}
 .act{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:22px;padding:32px 24px;text-align:center;color:var(--white);background:var(--ink)}
 .act.m-funny{background:#7A4A00}.act.m-winning{background:#1F4D3A}.act.m-dare{background:#8C2A20}.act.m-chaos{background:#164A78}
 .act .pill{padding:6px 16px;border-radius:999px;border:2px solid rgba(255,255,255,.4);font-size:.75rem;font-weight:800;letter-spacing:.12em;text-transform:uppercase}
-.act h1{font-size:clamp(2rem,9vw,3rem)}
+.act h1{font-size:clamp(2rem,9vw,3rem);max-width:560px}
+.act>*,.rev>*{max-width:560px;width:100%}
 .timer{position:relative;width:130px;height:130px}
 .timer svg{transform:rotate(-90deg)}
 .timer .bg{fill:none;stroke:rgba(255,255,255,.2);stroke-width:8}
@@ -209,15 +212,15 @@ textarea.challenge:focus{box-shadow:0 0 0 4px var(--sun)}
     <div class="lockicon">🔒</div>
     <div><h1>The rule is chosen</h1><p style="color:var(--ink-soft)">It was picked at random before you start. Nobody can change it now.</p></div>
     <div class="card">
-      <div class="hd"><span id="l-id">RD-0000</span><span id="l-time">—</span></div>
+      <div class="hd"><span>Round <span id="l-id">RD-0000</span></span><span id="l-time">—</span></div>
       <div class="bd">
         <div><div class="k">Challenge</div><div class="v" id="l-ch">—</div></div>
         <div><div class="k">Mode</div><div class="v" id="l-mode">—</div></div>
         <div><div class="k">Players</div><div class="v" id="l-players">—</div></div>
       </div>
-      <div class="seal">🛡️ Sealed <span id="l-seal"></span>. Reveal after the challenge.</div>
+      <div class="seal">🛡️ Seal code <span id="l-seal"></span> · check it matches on the reveal screen</div>
     </div>
-    <button class="btn btn-ink" onclick="go('activity')">Ready… GO! →</button>
+    <button class="btn btn-ink" onclick="snd('go');go('activity')">Ready… GO! →</button>
   </div>
 </section>
 
@@ -248,6 +251,7 @@ textarea.challenge:focus{box-shadow:0 0 0 4px var(--sun)}
       <div class="e" id="f-emoji">🏆</div>
       <div class="phrase" id="f-phrase"></div>
       <div class="tag" id="f-tag"></div>
+      <div class="hint" id="f-seal" style="opacity:.6"></div>
       <div class="who" id="who"><div class="k">Who got this one?</div><div class="row" id="who-row"></div></div>
       <div class="stack">
         <button class="btn light" onclick="playAgain()">⚡ Play again</button>
@@ -339,21 +343,21 @@ function build(mode,ch,players,grownup){
 
 /* ---------- NAV ---------- */
 function go(id){stopTimer();document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));const t=$('s-'+id);t.classList.add('active');t.scrollTop=0;if(id==='history')renderHistory();if(id==='activity')startTimer();if(id==='home')renderScores();}
-function gotoSetup(kind){if(kind==='fresh'){S.challenge='';S.mode=null;}if(kind==='new')S.challenge='';$('challenge').value=S.challenge;renderCats();renderIdeas();paintMode();paintPlayers();$('grownup-switch').classList.toggle('on',S.grownup);go('setup');}
-function setChallenge(t){S.challenge=t;$('challenge').value=t;}
-function setMode(m){S.mode=m;paintMode();}
+function gotoSetup(kind){snd('click');if(kind==='fresh'){S.challenge='';S.mode=null;}if(kind==='new')S.challenge='';$('challenge').value=S.challenge;renderCats();renderIdeas();paintMode();paintPlayers();$('grownup-switch').classList.toggle('on',S.grownup);go('setup');}
+function setChallenge(t){S.challenge=t;$('challenge').value=t;document.querySelectorAll('#ideas .chip').forEach(c=>c.classList.toggle('picked',c.dataset.t===t));if(t)snd('pick');}
+function setMode(m){S.mode=m;paintMode();snd('pick');}
 function paintMode(){['funny','winning','dare','chaos'].forEach(m=>{const e=$('mode-'+m);e.className='mode'+(S.mode===m?' on-'+m:'');});}
-function players(d){S.players=Math.min(10,Math.max(2,S.players+d));paintPlayers();if(S.scores.length)initScores();}
+function players(d){snd('click');S.players=Math.min(10,Math.max(2,S.players+d));paintPlayers();if(S.scores.length)initScores();}
 function paintPlayers(){$('pcount').textContent=S.players;$('minus').disabled=S.players<=2;$('plus').disabled=S.players>=10;$('faces').textContent=AV.slice(0,S.players).join(' ');}
-function toggleGrownup(){S.grownup=!S.grownup;$('grownup-switch').classList.toggle('on',S.grownup);}
-function renderCats(){$('cats').innerHTML=['all','race','jump','find','chore','party'].map(c=>`<button class="chip ${S.cat===c?'on':''}" onclick="S.cat='${c}';renderCats();renderIdeas()">${ICONS[c]} ${c[0].toUpperCase()+c.slice(1)}</button>`).join('');}
-function renderIdeas(){const pool=[...(S.cat==='all'?ALL:IDEAS[S.cat])].sort(()=>Math.random()-.5).slice(0,6);$('ideas').innerHTML=pool.map(t=>`<button class="chip" onclick="setChallenge(this.dataset.t)" data-t="${t}">${t}</button>`).join('')+`<button class="chip dash" onclick="renderIdeas()">🔀 more</button>`;}
+function toggleGrownup(){snd('click');S.grownup=!S.grownup;$('grownup-switch').classList.toggle('on',S.grownup);}
+function renderCats(){$('cats').innerHTML=['all','race','jump','find','chore','party'].map(c=>`<button class="chip ${S.cat===c?'on':''}" onclick="S.cat='${c}';snd('click');renderCats();renderIdeas()">${ICONS[c]} ${c[0].toUpperCase()+c.slice(1)}</button>`).join('');}
+function renderIdeas(){const pool=[...(S.cat==='all'?ALL:IDEAS[S.cat])].sort(()=>Math.random()-.5).slice(0,6);$('ideas').innerHTML=pool.map(t=>`<button onclick="setChallenge(this.dataset.t)" data-t="${t}" class="chip ${S.challenge===t?'picked':''}">${t}</button>`).join('')+`<button class="chip dash" onclick="snd('click');renderIdeas()">🔀 more</button>`;}
 
 /* ---------- LOCK ---------- */
 function rid(){const c='ABCDEFGHJKLMNPQRSTUVWXYZ23456789';let s='RD-';for(let i=0;i<4;i++)s+=c[Math.floor(Math.random()*c.length)];return s;}
 function fmt(d){return d.toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'})+' · '+d.toLocaleDateString([],{day:'numeric',month:'short'});}
 function toast(m){document.querySelectorAll('.toast').forEach(t=>t.remove());const t=document.createElement('div');t.className='toast';t.textContent=m;document.body.appendChild(t);setTimeout(()=>t.remove(),2200);}
-function lockRound(){const ch=$('challenge').value.trim();if(!ch){toast('Type or pick a challenge 🎯');shake();return;}if(!S.mode){toast('Pick a mode 🎮');shake();return;}S.challenge=ch;makeRound();}
+function lockRound(){const ch=$('challenge').value.trim();if(!ch){toast('Type or pick a challenge 🎯');shake();return;}if(!S.mode){toast('Pick a mode 🎮');shake();return;}S.challenge=ch;snd('lock');makeRound();}
 function shake(){const b=$('lockbtn');b.style.animation='shake .4s';b.addEventListener('animationend',()=>b.style.animation='',{once:true});}
 function makeRound(){const now=new Date();const data=build(S.mode,S.challenge,S.players,S.grownup);
   S.round={id:rid(),challenge:S.challenge,mode:S.mode,players:S.players,phrase:data.full,data,lockedAt:now.toISOString(),revealedAt:null};
@@ -363,7 +367,7 @@ function makeRound(){const now=new Date();const data=build(S.mode,S.challenge,S.
   $('a-mode').textContent=NAMES[S.mode];$('a-ch').textContent=S.challenge;$('act').className='act m-'+S.mode;
   go('locked');}
 function seal(r){let h=0;const s=r.id+r.phrase+r.lockedAt;for(let i=0;i<s.length;i++)h=(h*31+s.charCodeAt(i))>>>0;return '#'+h.toString(16).slice(0,6).toUpperCase();}
-function playAgain(){makeRound();}
+function playAgain(){snd('lock');makeRound();}
 function surpriseMe(){S.mode=pick(['funny','winning','dare','chaos']);S.challenge=pick(ALL);makeRound();toast(`🎲 ${S.challenge} · ${NAMES[S.mode]}`);}
 
 /* ---------- TIMER (guide only, never auto-reveals) ---------- */
@@ -382,7 +386,7 @@ function show(i){if(i>=stages.length){finish();return;}idx=i;const s=stages[i],e
   tmr=setTimeout(()=>s.final?finish():show(i+1),s.final?1300:s.d);}
 function advance(){if(done)return;clearTimeout(tmr);idx++;idx>=stages.length?finish():show(idx);}
 function finish(){if(done)return;done=true;clearTimeout(tmr);const r=S.round;$('stage').style.display='none';$('dots').innerHTML='';$('hint').style.display='none';
-  $('f-phrase').textContent=r.phrase;$('f-tag').textContent=NAMES[r.mode];$('f-emoji').textContent=r.data.emoji;renderWho();$('final').classList.add('show');snd(r.data.sound);setTimeout(confetti,150);}
+  $('f-phrase').textContent=r.phrase;$('f-tag').textContent=NAMES[r.mode];$('f-seal').textContent='🛡️ seal '+seal(r)+' · matched';$('f-emoji').textContent=r.data.emoji;renderWho();$('final').classList.add('show');snd(r.data.sound);setTimeout(confetti,150);}
 
 /* ---------- SCORES ---------- */
 function initScores(){S.scores=Array.from({length:S.players},(_,i)=>({a:AV[i],n:0}));}
@@ -402,6 +406,10 @@ let AC=null;function ac(){if(!AC){try{AC=new(window.AudioContext||window.webkitA
 function tone(f,t0,d,type='sine',g0=.3){const c=ac();if(!c)return;const o=c.createOscillator(),g=c.createGain();o.type=type;o.connect(g);g.connect(c.destination);o.frequency.setValueAtTime(f,t0);g.gain.setValueAtTime(g0,t0);g.gain.exponentialRampToValueAtTime(.001,t0+d);o.start(t0);o.stop(t0+d+.01);}
 function snd(k){const c=ac();if(!c)return;const n=c.currentTime;
   if(k==='tick')tone(900,n,.08);
+  if(k==='click')tone(600,n,.06,'triangle',.2);
+  if(k==='pick'){tone(660,n,.09,'triangle',.25);tone(990,n+.08,.12,'triangle',.25);}
+  if(k==='lock'){tone(220,n,.12,'square',.2);tone(330,n+.1,.18,'square',.2);}
+  if(k==='go'){const o=c.createOscillator(),g=c.createGain();o.type='sawtooth';o.connect(g);g.connect(c.destination);o.frequency.setValueAtTime(200,n);o.frequency.exponentialRampToValueAtTime(1400,n+.35);g.gain.setValueAtTime(.2,n);g.gain.exponentialRampToValueAtTime(.001,n+.4);o.start(n);o.stop(n+.42);}
   if(k==='drum')for(let i=0;i<16;i++)tone(55+Math.random()*30,n+i*.055,.05,'sawtooth',.12);
   if(k==='fanfare')[[523,0],[659,.14],[784,.28],[1047,.42],[784,.6],[1047,.75]].forEach(([f,d])=>tone(f,n+d,.28,'triangle',.35));
   if(k==='boing'){const o=c.createOscillator(),g=c.createGain();o.connect(g);g.connect(c.destination);o.frequency.setValueAtTime(700,n);o.frequency.exponentialRampToValueAtTime(80,n+.7);g.gain.setValueAtTime(.4,n);g.gain.exponentialRampToValueAtTime(.001,n+.7);o.start(n);o.stop(n+.72);}
