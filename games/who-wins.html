@@ -1,0 +1,400 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+<title>Who Wins? – a family challenge game | BB & Co Imaginations</title>
+<meta name="description" content="Pick a challenge, do it, then find out who won. The rule is locked before you start, so nobody can twist it. A fair, silly family game from BB & Co Imaginations.">
+<link rel="icon" href="../assets/icon.png" type="image/png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--paper:#FFF8EC;--ink:#1F4D3A;--ink-soft:#3F6B58;--sun:#FFC93C;--coral:#EE6352;--sky:#BFE3F4;--leaf:#7FB77E;--navy:#164A78;--orange:#E4722F;--white:#fff;
+--display:'Fredoka',system-ui,sans-serif;--body:'Nunito',system-ui,sans-serif}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{height:100%}
+body{font-family:var(--body);background:var(--paper);color:var(--ink);font-size:17px;line-height:1.5;overflow:hidden}
+button{font:inherit;cursor:pointer}
+canvas#confetti{position:fixed;inset:0;pointer-events:none;z-index:99}
+.screen{position:fixed;inset:0;display:none;flex-direction:column;overflow-y:auto;-webkit-overflow-scrolling:touch}
+.screen.active{display:flex;animation:in .25s ease}
+@keyframes in{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+.wrap{width:100%;max-width:520px;margin:0 auto;padding:20px}
+.top{display:flex;align-items:center;gap:12px;padding:14px 20px;border-bottom:3px solid var(--ink);background:var(--paper);position:sticky;top:0;z-index:5}
+.top a,.top button.back{display:inline-flex;align-items:center;justify-content:center;width:40px;height:40px;border-radius:50%;border:3px solid var(--ink);background:var(--white);color:var(--ink);text-decoration:none;font-size:18px}
+.top h2{font-family:var(--display);font-weight:600;font-size:1.3rem;flex:1}
+h1,h2,h3{font-family:var(--display);font-weight:600;line-height:1.1}
+.btn{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;padding:16px 20px;border-radius:999px;border:3px solid var(--ink);background:var(--white);color:var(--ink);font-family:var(--display);font-weight:600;font-size:1.15rem;transition:transform .12s}
+.btn:active{transform:scale(.97)}
+.btn-coral{background:var(--coral);color:var(--white)}
+.btn-ink{background:var(--ink);color:var(--white)}
+.btn-sun{background:var(--sun)}
+.btn-ghost{background:transparent;border-color:transparent;color:var(--ink-soft);font-size:1rem;padding:10px}
+.stack{display:flex;flex-direction:column;gap:12px}
+.label{font-size:.75rem;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-soft);margin:18px 0 8px}
+/* HOME */
+.home{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:18px;padding:32px 24px;background:var(--sky)}
+.home .badge{font-size:72px;animation:float 3s ease-in-out infinite}
+@keyframes float{50%{transform:translateY(-10px)}}
+.home h1{font-size:clamp(2.6rem,12vw,4rem);color:var(--ink)}
+.home h1 span{color:var(--coral)}
+.home p{max-width:30ch;color:var(--ink);font-weight:600}
+.home .stack{width:100%;max-width:320px}
+.brand-link{font-size:.85rem;color:var(--ink-soft);text-decoration:none;font-weight:700}
+.brand-link img{height:34px;display:block;margin:0 auto 6px}
+/* SETUP */
+textarea.challenge{width:100%;padding:16px 44px 16px 16px;border:3px solid var(--ink);border-radius:18px;background:var(--white);font-family:var(--display);font-size:1.3rem;color:var(--ink);resize:none;outline:none;line-height:1.3}
+textarea.challenge:focus{box-shadow:0 0 0 4px var(--sun)}
+.clear{position:absolute;right:12px;top:12px;border:0;background:none;font-size:18px;opacity:.5}
+.chips{display:flex;gap:8px;overflow-x:auto;padding-bottom:6px;scrollbar-width:none}
+.chips::-webkit-scrollbar{display:none}
+.chip{flex:none;padding:9px 14px;border-radius:999px;border:3px solid var(--ink);background:var(--white);font-family:var(--display);font-weight:500;font-size:.95rem;white-space:nowrap}
+.chip.on,.chip:active{background:var(--ink);color:var(--white)}
+.chip.dash{border-style:dashed;color:var(--ink-soft)}
+.modes{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.mode{padding:16px 10px;border-radius:18px;border:3px solid var(--ink);background:var(--white);text-align:center;display:flex;flex-direction:column;gap:6px;align-items:center}
+.mode .e{font-size:32px;line-height:1}
+.mode .n{font-family:var(--display);font-weight:600;font-size:1.05rem}
+.mode .d{font-size:.75rem;color:var(--ink-soft);line-height:1.2}
+.mode.on-funny{background:var(--sun)}.mode.on-winning{background:var(--leaf)}.mode.on-dare{background:var(--coral);color:var(--white)}.mode.on-dare .d{color:#fff}.mode.on-chaos{background:var(--navy);color:var(--white)}.mode.on-chaos .d{color:#fff}
+.stepper{display:flex;align-items:center;justify-content:center;gap:22px}
+.stepper button{width:58px;height:58px;border-radius:50%;border:3px solid var(--ink);background:var(--white);font-size:28px;font-weight:800}
+.stepper button:disabled{opacity:.35}
+.stepper .n{font-family:var(--display);font-weight:700;font-size:3.5rem;min-width:64px;text-align:center}
+.faces{text-align:center;font-size:22px;min-height:28px}
+.toggle{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 16px;border:3px solid var(--ink);border-radius:18px;background:var(--white)}
+.toggle .t{font-family:var(--display);font-weight:600}
+.toggle .s{font-size:.8rem;color:var(--ink-soft)}
+.switch{position:relative;width:54px;height:30px;border-radius:999px;border:3px solid var(--ink);background:var(--white);flex:none}
+.switch::after{content:"";position:absolute;top:2px;left:2px;width:20px;height:20px;border-radius:50%;background:var(--ink);transition:left .15s}
+.switch.on{background:var(--leaf)}.switch.on::after{left:26px}
+.safe{font-size:.8rem;color:var(--ink-soft);padding:10px 14px;border-left:4px solid var(--sun);background:var(--white);border-radius:0 10px 10px 0}
+.sticky{position:sticky;bottom:0;padding:12px 20px 20px;background:linear-gradient(transparent,var(--paper) 40%)}
+/* LOCKED */
+.lockwrap{flex:1;display:flex;flex-direction:column;align-items:center;gap:18px;padding:28px 20px;text-align:center}
+.lockicon{width:80px;height:80px;border-radius:50%;background:var(--ink);color:var(--white);display:flex;align-items:center;justify-content:center;font-size:36px;animation:pop .45s cubic-bezier(.34,1.56,.64,1)}
+@keyframes pop{from{transform:scale(0) rotate(-15deg)}}
+.card{width:100%;border:3px solid var(--ink);border-radius:18px;background:var(--white);overflow:hidden;text-align:left;box-shadow:6px 6px 0 var(--ink)}
+.card .hd{display:flex;justify-content:space-between;padding:10px 16px;border-bottom:3px solid var(--ink);font-size:.85rem;font-weight:700;color:var(--ink-soft)}
+.card .bd{padding:14px 16px;display:grid;gap:10px}
+.card .bd .k{font-size:.7rem;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-soft)}
+.card .bd .v{font-weight:700}
+.seal{margin:4px 16px 14px;padding:10px 12px;border:3px dashed var(--coral);border-radius:12px;font-size:.85rem;font-weight:700;color:var(--coral)}
+/* ACTIVITY */
+.act{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:22px;padding:32px 24px;text-align:center;color:var(--white);background:var(--ink)}
+.act.m-funny{background:#7A4A00}.act.m-winning{background:#1F4D3A}.act.m-dare{background:#8C2A20}.act.m-chaos{background:#164A78}
+.act .pill{padding:6px 16px;border-radius:999px;border:2px solid rgba(255,255,255,.4);font-size:.75rem;font-weight:800;letter-spacing:.12em;text-transform:uppercase}
+.act h1{font-size:clamp(2rem,9vw,3rem)}
+.timer{position:relative;width:130px;height:130px}
+.timer svg{transform:rotate(-90deg)}
+.timer .bg{fill:none;stroke:rgba(255,255,255,.2);stroke-width:8}
+.timer .fg{fill:none;stroke:var(--sun);stroke-width:8;stroke-linecap:round;transition:stroke-dashoffset .95s linear}
+.timer .num{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-family:var(--display);font-weight:700;font-size:3rem}
+.timer .num.done{color:var(--sun)}
+.tctl{display:flex;gap:10px;align-items:center;font-size:.8rem;opacity:.85}
+.tctl button{width:40px;height:40px;border-radius:50%;border:2px solid rgba(255,255,255,.5);background:transparent;color:#fff;font-weight:800}
+.act .btn{max-width:340px;background:var(--white);color:var(--ink)}
+/* REVEAL */
+.rev{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;padding:32px 24px;text-align:center;color:var(--white);background:var(--ink);cursor:pointer;user-select:none}
+.rev.m-funny{background:#7A4A00}.rev.m-winning{background:#1F4D3A}.rev.m-dare{background:#8C2A20}.rev.m-chaos{background:#164A78}
+.stage{min-height:40vh;display:flex;align-items:center;justify-content:center;width:100%}
+.st{font-family:var(--display);font-weight:700;animation:pop .35s cubic-bezier(.34,1.56,.64,1);white-space:pre-line}
+.st.who{font-size:1.9rem;opacity:.9}.st.trig{font-size:4.6rem;color:var(--sun);line-height:.95}.st.verb{font-size:2.2rem;opacity:.75}.st.res{font-size:2.6rem}.st.chaos{font-size:3rem;color:var(--sun)}
+.dots{display:flex;gap:6px}.dot{width:8px;height:8px;border-radius:50%;background:rgba(255,255,255,.3)}.dot.on{background:var(--sun);transform:scale(1.3)}
+.hint{font-size:.75rem;font-weight:800;letter-spacing:.12em;text-transform:uppercase;opacity:.5}
+.final{display:none;flex-direction:column;align-items:center;gap:16px;width:100%}
+.final.show{display:flex;animation:pop .45s cubic-bezier(.34,1.56,.64,1)}
+.final .e{font-size:64px}
+.final .phrase{font-family:var(--display);font-weight:600;font-size:1.7rem;line-height:1.25}
+.final .tag{padding:6px 14px;border-radius:999px;border:2px solid rgba(255,255,255,.4);font-size:.8rem;font-weight:700}
+.who{width:100%;padding:12px;border-radius:14px;background:rgba(255,255,255,.1)}
+.who .k{font-size:.7rem;font-weight:800;letter-spacing:.12em;text-transform:uppercase;opacity:.7;margin-bottom:8px}
+.who .row{display:flex;gap:8px;justify-content:center;flex-wrap:wrap}
+.who button{width:48px;height:48px;border-radius:50%;border:2px solid rgba(255,255,255,.4);background:rgba(255,255,255,.12);font-size:22px}
+.who button.hit{background:var(--sun);border-color:var(--sun)}
+.rev .stack{width:100%;max-width:340px}
+.rev .btn{border-color:var(--white)}
+.rev .btn.light{background:var(--white);color:var(--ink)}
+.rev .btn.clear-b{background:transparent;color:var(--white)}
+/* SCORES */
+.scores{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;padding:8px 0}
+.score{display:flex;flex-direction:column;align-items:center;font-family:var(--display);font-weight:700}
+.score .a{width:40px;height:40px;border-radius:50%;background:var(--white);border:3px solid var(--ink);display:flex;align-items:center;justify-content:center;font-size:20px}
+.score.lead .a{background:var(--sun)}
+/* HISTORY */
+.hcard{border:3px solid var(--ink);border-radius:16px;background:var(--white);padding:12px 14px;display:grid;gap:6px}
+.hcard .m{font-size:.75rem;color:var(--ink-soft);font-weight:700;display:flex;justify-content:space-between}
+.hcard .c{font-weight:800}
+.hcard .p{color:var(--ink-soft)}
+.empty{text-align:center;padding:48px 20px;color:var(--ink-soft)}
+.toast{position:fixed;bottom:110px;left:50%;transform:translateX(-50%);background:var(--ink);color:#fff;padding:10px 18px;border-radius:999px;font-weight:700;z-index:50;white-space:nowrap}
+@keyframes shake{20%{transform:translateX(-8px)}40%{transform:translateX(8px)}60%{transform:translateX(-5px)}80%{transform:translateX(5px)}}
+</style>
+</head>
+<body>
+<canvas id="confetti"></canvas>
+
+<!-- HOME -->
+<section class="screen active" id="s-home">
+  <div class="home">
+    <div class="badge">🏆</div>
+    <h1>Who <span>Wins?</span></h1>
+    <p>Do the challenge first. Find out the rule after. Nobody gets to twist it.</p>
+    <div id="scores-home" class="scores"></div>
+    <div class="stack">
+      <button class="btn btn-coral" onclick="gotoSetup('fresh')">⚡ Quick play</button>
+      <button class="btn btn-sun" onclick="surpriseMe()">🎲 Surprise me</button>
+      <button class="btn" onclick="go('history')">📜 History</button>
+    </div>
+    <a class="brand-link" href="../games.html"><img src="../assets/logo-wide.png" alt="">Back to BB &amp; Co Imaginations</a>
+  </div>
+</section>
+
+<!-- SETUP -->
+<section class="screen" id="s-setup">
+  <div class="top"><button class="back" onclick="go('home')">←</button><h2>New round</h2></div>
+  <div class="wrap">
+    <div style="position:relative">
+      <textarea id="challenge" class="challenge" rows="2" placeholder="Type a challenge…" oninput="S.challenge=this.value"></textarea>
+      <button class="clear" onclick="setChallenge('')">✕</button>
+    </div>
+    <div class="label">Ideas</div>
+    <div class="chips" id="cats"></div>
+    <div class="chips" id="ideas" style="margin-top:8px"></div>
+    <div class="label">Mode</div>
+    <div class="modes">
+      <button class="mode" id="mode-funny" onclick="setMode('funny')"><span class="e">🎪</span><span class="n">Funny</span><span class="d">Silly names, no losers</span></button>
+      <button class="mode" id="mode-winning" onclick="setMode('winning')"><span class="e">🏆</span><span class="n">Winners</span><span class="d">Only good news</span></button>
+      <button class="mode" id="mode-dare" onclick="setMode('dare')"><span class="e">🐔</span><span class="n">Dare</span><span class="d">A tiny silly task</span></button>
+      <button class="mode" id="mode-chaos" onclick="setMode('chaos')"><span class="e">🌀</span><span class="n">Chaos</span><span class="d">Anything can happen</span></button>
+    </div>
+    <div class="label">Players</div>
+    <div class="stepper">
+      <button id="minus" onclick="players(-1)">−</button><div class="n" id="pcount">2</div><button id="plus" onclick="players(1)">+</button>
+    </div>
+    <div class="faces" id="faces"></div>
+    <div class="label">Twist</div>
+    <div class="toggle" onclick="toggleGrownup()">
+      <div><div class="t">Grown-ups play too</div><div class="s">Sometimes Mum or Dad gets the consequence, whatever happened</div></div>
+      <div class="switch" id="grownup-switch"></div>
+    </div>
+    <p class="safe" style="margin-top:14px">Play safe: walk on stairs, keep drinks small, and give the dares room. The rule is random, so there is never a reason to rush.</p>
+  </div>
+  <div class="sticky"><button class="btn btn-coral" id="lockbtn" onclick="lockRound()">🔒 Lock the rule</button></div>
+</section>
+
+<!-- LOCKED -->
+<section class="screen" id="s-locked">
+  <div class="top"><button class="back" onclick="go('setup')">←</button><h2>Rule locked</h2></div>
+  <div class="lockwrap">
+    <div class="lockicon">🔒</div>
+    <div><h1>The rule is chosen</h1><p style="color:var(--ink-soft)">It was picked at random before you start. Nobody can change it now.</p></div>
+    <div class="card">
+      <div class="hd"><span id="l-id">RD-0000</span><span id="l-time">—</span></div>
+      <div class="bd">
+        <div><div class="k">Challenge</div><div class="v" id="l-ch">—</div></div>
+        <div><div class="k">Mode</div><div class="v" id="l-mode">—</div></div>
+        <div><div class="k">Players</div><div class="v" id="l-players">—</div></div>
+      </div>
+      <div class="seal">🛡️ Sealed <span id="l-seal"></span>. Reveal after the challenge.</div>
+    </div>
+    <button class="btn btn-ink" onclick="go('activity')">Ready… GO! →</button>
+  </div>
+</section>
+
+<!-- ACTIVITY -->
+<section class="screen" id="s-activity">
+  <div class="act" id="act">
+    <div class="pill" id="a-mode">Funny mode</div>
+    <h1 id="a-ch">Run up the stairs</h1>
+    <div class="timer">
+      <svg width="130" height="130" viewBox="0 0 130 130"><circle class="bg" cx="65" cy="65" r="58"/><circle class="fg" id="ring" cx="65" cy="65" r="58" stroke-dasharray="364" stroke-dashoffset="0"/></svg>
+      <div class="num" id="tnum">10</div>
+    </div>
+    <div class="tctl"><button onclick="adjTimer(-5)">−5</button><span>seconds (just a guide)</span><button onclick="adjTimer(5)">+5</button></div>
+    <div class="pill" style="border-style:dashed">🔒 rule already locked</div>
+    <button class="btn" onclick="doReveal()">🎉 Reveal the rule</button>
+  </div>
+</section>
+
+<!-- REVEAL -->
+<section class="screen" id="s-reveal">
+  <div class="rev" id="rev" onclick="advance()">
+    <div class="stage" id="stage"><div class="st who" id="st-text"></div></div>
+    <div class="dots" id="dots"></div>
+    <div class="hint" id="hint">tap to hurry</div>
+    <div class="final" id="final" onclick="event.stopPropagation()">
+      <div class="e" id="f-emoji">🏆</div>
+      <div class="phrase" id="f-phrase"></div>
+      <div class="tag" id="f-tag"></div>
+      <div class="who" id="who"><div class="k">Who got this one?</div><div class="row" id="who-row"></div></div>
+      <div class="stack">
+        <button class="btn light" onclick="playAgain()">⚡ Play again</button>
+        <button class="btn clear-b" onclick="gotoSetup('edit')">✏️ Edit challenge</button>
+        <button class="btn clear-b" onclick="gotoSetup('new')">🎯 New round</button>
+        <button class="btn-ghost" style="color:#fff;opacity:.7" onclick="go('home')">Home</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- HISTORY -->
+<section class="screen" id="s-history">
+  <div class="top"><button class="back" onclick="go('home')">←</button><h2>History</h2></div>
+  <div class="wrap stack" id="hist"></div>
+</section>
+
+<script>
+/* ---------- DATA ---------- */
+const OUT={
+funny:{
+first:["is the silly sausage 🌭","is the cheeky pickle 🥒","is the noodle nose 🍜","is the dancing donut 🍩","is the giggle goblin 👺","is captain giggles 😂","is the twirly turnip 🌀","is the bouncy bean 🫘","is the wobbly worm 🐛","is the jiggly jellyfish 🪼","is the dizzy dinosaur 🦕","is the sneaky snail 🐌","is the fluffy flamingo 🦩","is the wiggly waffle 🧇","is the goofy giraffe 🦒","is the zany zebra 🦓","is the pompom penguin 🐧","is the squiggly spaghetti 🍝","is the jumpy jellybean 🍬","is the wacky walrus 🦭","is the tumbling tomato 🍅","is the wibble wobble wizard 🧙","is the chuckle champion 🎉","is the loony lollipop 🍭","is the bobbly blueberry 🫐","is the flappy flapjack 🥞","is the tipsy teapot 🫖"],
+last:["is the banana brain 🍌","is the marshmallow moo 🐄","is the sleepy squirrel 🐿️","is the grumpy grape 🍇","is the loopy lemon 🍋","is the pudding professor 🍮","is the bubbly bumblebee 🐝","is the wonky watermelon 🍉","is the clumsy cucumber 🥒","is the blobby blueberry 🫐","is the dozy doughnut 🍩","is the muddled muffin 🧁","is the soggy sandwich 🥪","is the droopy dragon 🐉","is the lazy lobster 🦞","is the snoozy strawberry 🍓","is the stumbling starfish ⭐","is the groggy goblin 👺"],
+middle:["is the middle muddle 🌀","is the perfectly average avocado 🥑","is the in-between iguana 🦎","is the sandwich squirrel 🥪","is the middly-widdly mushroom 🍄","is the just-about jellyfish 🪼"]},
+winning:{
+first:["wins this round! 🏆","gets the champion clap! 👏","is the speed champion! ⚡","earns the golden star! ⭐","is crowned the winner! 👑","gets to choose the next challenge! 🎯","earns a victory lap! 🏃","wins bragging rights! 💪","gets a winner's bow! 🎭","earns a round of applause! 👏","gets the first-place high five! 🙌","earns the superstar trophy! 🌟","gets the champion's cheer! 📣","earns a victory dance! 💃","wins the golden goblet! 🏆"],
+last:["wins this round! 🏆","chooses the next challenge! 🎯","gets a victory dance! 💃","wins the patience award! 🌟","is last one standing and WINS! 🥇","earns the tortoise trophy! 🐢","wins a special slow clap! 👏","earns the saved-the-best-for-last award! 🌟","is the last-place legend! 🎖️","wins the endurance cup! 🏆","gets to make one house rule! 📋","earns the surprise winner medal! 🥇","gets the final word on the next challenge! 📜","is the ultimate underdog winner! 🦸","wins, because slow and steady wins the race! 🐢"]},
+dare:{
+first:["must do a chicken dance! 🐔","must roar like a lion three times! 🦁","must spin around five times! 🌀","must do five star jumps! ⭐","must flap their arms like a bird! 🦅","must hop on one foot for ten seconds! 🦘","must bark like a dog three times! 🐕","must moonwalk across the room! 🕺","must do their best robot dance! 🤖","must balance on one leg and count to ten! 🦩","must waddle like a penguin to the nearest wall! 🐧","must crawl like a crab! 🦀","must make a funny face and hold it for five seconds! 😜","must trumpet like an elephant! 🐘","must pretend to swim for five seconds! 🏊","must wiggle like a worm! 🐛","must pat their head and rub their tummy at the same time! 🤸","must meow like a cat three times! 🐱","must do a slow-motion victory run! 🏃","must stomp around like a giant! 🦣","must pretend to be a melting ice cream! 🍦","must be a washing machine for five seconds! 🌀","must buzz like a bee! 🐝","must do their best dinosaur! 🦖"],
+last:["must hop like a frog to the door! 🐸","must flap like a penguin! 🐧","must do a slow-motion victory walk! 🚶","must moo like a cow three times! 🐄","must pretend to ride a horse! 🐴","must do a funky freestyle dance! 💃","must squeak like a mouse! 🐭","must blow a raspberry! 😝","must spin while clapping! 🌀","must crawl to the nearest chair! 🐾","must do their silliest laugh out loud! 😂","must bounce ten times on the spot! 🦘","must oink like a pig three times! 🐷","must pretend to lift something very heavy! 🏋️","must do a dramatic slow-motion flop onto the sofa! 🎭","must do their best owl! 🦉","must shake their bottom for five seconds! 🎵","must gallop around the room once! 🐎"],
+middle:["must do a mystery dare chosen by everyone else! 🎲","must invent a brand new dance move! 🕺","must make up a silly song about the challenge! 🎵","must say their own name in three funny voices! 😄"]}};
+const CHAOS=["Everyone except the fastest player wins! 🎉","Everyone except the slowest player wins! 🎉","The youngest player wins this round! 🌟","The oldest player wins this round! 🏆","Nobody loses. Everybody cheer! 📣","All the kids win this round! 🎉","The tallest player wins! 📏","The shortest player wins! 📏","Whoever laughed during the round wins! 😂","Whoever is wearing the most colours wins! 🌈","Whoever made a sound during the challenge wins! 📢","Everyone wins. Group hug! 🤗","Whoever was funniest during the round wins! 😂","Whoever finished second wins this time! 🥈","The slowest player is the secret winner! 🐢","It's a draw. Everyone high five! 🙌","Reverse order: the last shall be first! 🔄","The silliest-looking player wins! 🤪","The quietest player wins! 🤫","The biggest smile wins! 😁","Everyone wins. Take a bow! 🎭","The brightest top wins! 👕","Nobody knows who won. Everyone gets a point! 🎲","The loudest player wins! 📢","The player in the middle wins! 🌀","The youngest player chooses the next challenge! 🎯","Whoever blinked the most wins! 👀","Everyone does a lap of honour. You ALL win! 🏆"];
+const GROWNUP=["Mum is the loser this round! 😂","Dad is the loser this round! 😂","The grown-up loses, whatever happened! 🎉","The grown-up must do a chicken dance! 🐔","The grown-up must roar like a lion! 🦁","Kids rule: every grown-up loses! 👑","The grown-up must do a dare the kids choose! 🎯","The grown-up must hop to the kitchen and back! 🐸","The grown-up is the silly sausage! 🌭","The grown-up must sing the next challenge! 🎵","The grown-up must do a slow-motion victory walk for the kids! 🚶","The grown-up must be a statue for ten seconds while the kids pose them! 🗿"];
+const EMO={funny:['🌭','🥒','🍌','😂','🎪','🍩','🌀','🧙'],winning:['🏆','⭐','👑','🥇','⚡','🎉','💪','🌟'],dare:['🐔','🦁','🌀','🐸','🐧','🤖','🦘','🐘'],chaos:['🎉','🌀','🔄','🤗','😂','🎲','📣','🌈']};
+const NAMES={funny:'Funny mode',winning:'Winners mode',dare:'Dare mode',chaos:'Chaos mode'};
+const IDEAS={
+race:["Walk up the stairs","Get to the kitchen","Get to the nearest chair","Walk around the table once","Get to the bathroom","Get to the garden","Reach the table","Touch the front door","Touch the sofa","Touch your toes"],
+jump:["Jump to the door","Hop to the wall","Hop on one foot to the door","Do 3 hops","Bounce to the sofa","Skip to the window","Clap 5 times","Spin around once","Sit on the floor","Lie down on the bed"],
+find:["Find a red object","Find something yellow","Find something blue","Find a soft toy","Find your favourite book","Fetch the remote control","Find a spoon","Pick up the cushion","Grab a pillow","Stack 3 books"],
+chore:["Put your shoes on","Put your pyjamas on","Put your coat on","Put your socks on","Put your jumper on","Tidy 3 toys","Put your cup in the sink","Put the book away","Finish your drink","Brush your teeth"],
+party:["Roar like a lion","Clap 5 times","Spin around once","Do 3 hops","Skip to the window","Sit cross-legged on the floor","Touch your toes","Do a silly dance"]};
+const ALL=[...new Set(Object.values(IDEAS).flat())];
+const ICONS={race:'🏃',jump:'🦘',find:'🔍',chore:'🧹',party:'🎉',all:'✨'};
+const AV=['🐯','🦊','🐸','🐧','🦄','🐬','🦁','🐻','🐼','🐨'];
+
+/* ---------- STATE ---------- */
+const S={challenge:'',mode:null,players:2,grownup:true,cat:'all',round:null,scores:[],timer:10};
+const pick=a=>a[Math.floor(Math.random()*a.length)];
+const $=id=>document.getElementById(id);
+
+/* ---------- PARSER ---------- */
+function stem(t){
+  t=t.trim().replace(/[.!]+$/,'');
+  const P=[
+    [/^(walk|run|go|race)s?\s+(up|down|to|along|through|around|across|over)\s+(.+)/i,m=>`${third(m[1])} ${m[2]} ${m[3]}`],
+    [/^finish(?:es)?\s+(.+)/i,m=>`finishes ${m[1]}`],
+    [/^touch(?:es)?\s+(.+)/i,m=>`touches ${m[1]}`],
+    [/^puts?\s+(?:your\s+|their\s+)?(.+?)\s+on$/i,m=>`puts their ${m[1]} on`],
+    [/^puts?\s+on\s+(?:your\s+|their\s+)?(.+)/i,m=>`puts their ${m[1]} on`],
+    [/^puts?\s+(.+?)\s+(in|away|back)\b(.*)/i,m=>`puts ${m[1]} ${m[2]}${m[3]}`],
+    [/^tid(?:y|ies)\s+(.+)/i,m=>`tidies ${m[1]}`],
+    [/^jumps?\s+(?:to|over|up to)\s+(.+)/i,m=>`jumps to ${m[1]}`],
+    [/^gets?\s+(to|up|down)\s+(.+)/i,m=>`gets ${m[1]} ${m[2]}`],
+    [/^hops?\s+(?:to|over|along)\s+(.+)/i,m=>`hops to ${m[1]}`],
+    [/^sits?\s+(on|in|at|cross-legged on)\s+(.+)/i,m=>`sits ${m[1]} ${m[2]}`],
+    [/^lies?\s+down(.*)/i,m=>`lies down${m[1]}`],
+    [/^picks?\s+up\s+(.+)/i,m=>`picks up ${m[1]}`],
+    [/^(find|fetch|grab|reach|stack|brush|do|clap|spin|roar|skip|bounce|crawl|drink)s?\b(.*)/i,m=>`${third(m[1])}${m[2]}`]];
+  for(const[r,f]of P){const m=t.match(r);if(m)return f(m).replace(/\byour\b/gi,'their').replace(/\s+/g,' ').trim();}
+  const g=t.match(/^([a-z]+)\s+(.+)/i);
+  return g?`${third(g[1])} ${g[2].replace(/\byour\b/gi,'their')}`:null;
+}
+function third(v){v=v.toLowerCase();if(/(s|x|z|ch|sh)$/.test(v))return v+'es';if(/[^aeiou]y$/.test(v))return v.slice(0,-1)+'ies';if(v==='go')return 'goes';if(v==='do')return 'does';return v+'s';}
+
+/* ---------- RULE BUILDER ---------- */
+function build(mode,ch,players,grownup){
+  if(grownup&&Math.random()<0.15){const p=pick(GROWNUP);return{full:p,emoji:'👨‍👩‍👧',sound:'chaos',stages:[{t:'⚡ PLOT TWIST ⚡',c:'chaos',d:1100,s:'chaos'},{t:p,c:'res',final:true}]};}
+  if(mode==='chaos'){const p=pick(CHAOS);return{full:p,emoji:pick(EMO.chaos),sound:'chaos',stages:[{t:'🌀 CHAOS!',c:'chaos',d:1000,s:'chaos'},{t:p,c:'res',final:true}]};}
+  const st=stem(ch);let trig;
+  if(mode==='winning'||players<3)trig=Math.random()<.5?'first':'last';
+  else{const r=Math.random();trig=r<.45?'first':r<.88?'last':'middle';}
+  const o=pick(OUT[mode][trig]);
+  const tt=trig==='middle'?'in the middle':trig;
+  const full=st?`Whoever ${st} ${tt} ${o}`:`Whoever comes ${tt} ${o}`;
+  let verb='IS THE…';if(/^must/.test(o))verb='MUST…';else if(/^(wins|gets|earns|chooses|is crowned|is last)/.test(o))verb='WINS!';
+  return{full,emoji:pick(EMO[mode]),sound:mode==='winning'?'fanfare':mode==='dare'?'boing':'funny',
+    stages:[{t:st?`Whoever ${st}…`:'Whoever comes…',c:'who',d:1100},{t:trig==='middle'?'IN THE\nMIDDLE!':trig.toUpperCase()+'!',c:'trig',d:1000,s:'drum'},{t:verb,c:'verb',d:800},{t:o.replace(/^(is the |is |must |wins |gets |earns |chooses )/i,'').toUpperCase(),c:'res',final:true}]};
+}
+
+/* ---------- NAV ---------- */
+function go(id){stopTimer();document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));const t=$('s-'+id);t.classList.add('active');t.scrollTop=0;if(id==='history')renderHistory();if(id==='activity')startTimer();if(id==='home')renderScores();}
+function gotoSetup(kind){if(kind==='fresh'){S.challenge='';S.mode=null;}if(kind==='new')S.challenge='';$('challenge').value=S.challenge;renderCats();renderIdeas();paintMode();paintPlayers();$('grownup-switch').classList.toggle('on',S.grownup);go('setup');}
+function setChallenge(t){S.challenge=t;$('challenge').value=t;}
+function setMode(m){S.mode=m;paintMode();}
+function paintMode(){['funny','winning','dare','chaos'].forEach(m=>{const e=$('mode-'+m);e.className='mode'+(S.mode===m?' on-'+m:'');});}
+function players(d){S.players=Math.min(10,Math.max(2,S.players+d));paintPlayers();if(S.scores.length)initScores();}
+function paintPlayers(){$('pcount').textContent=S.players;$('minus').disabled=S.players<=2;$('plus').disabled=S.players>=10;$('faces').textContent=AV.slice(0,S.players).join(' ');}
+function toggleGrownup(){S.grownup=!S.grownup;$('grownup-switch').classList.toggle('on',S.grownup);}
+function renderCats(){$('cats').innerHTML=['all','race','jump','find','chore','party'].map(c=>`<button class="chip ${S.cat===c?'on':''}" onclick="S.cat='${c}';renderCats();renderIdeas()">${ICONS[c]} ${c[0].toUpperCase()+c.slice(1)}</button>`).join('');}
+function renderIdeas(){const pool=[...(S.cat==='all'?ALL:IDEAS[S.cat])].sort(()=>Math.random()-.5).slice(0,6);$('ideas').innerHTML=pool.map(t=>`<button class="chip" onclick="setChallenge(this.dataset.t)" data-t="${t}">${t}</button>`).join('')+`<button class="chip dash" onclick="renderIdeas()">🔀 more</button>`;}
+
+/* ---------- LOCK ---------- */
+function rid(){const c='ABCDEFGHJKLMNPQRSTUVWXYZ23456789';let s='RD-';for(let i=0;i<4;i++)s+=c[Math.floor(Math.random()*c.length)];return s;}
+function fmt(d){return d.toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'})+' · '+d.toLocaleDateString([],{day:'numeric',month:'short'});}
+function toast(m){document.querySelectorAll('.toast').forEach(t=>t.remove());const t=document.createElement('div');t.className='toast';t.textContent=m;document.body.appendChild(t);setTimeout(()=>t.remove(),2200);}
+function lockRound(){const ch=$('challenge').value.trim();if(!ch){toast('Type or pick a challenge 🎯');shake();return;}if(!S.mode){toast('Pick a mode 🎮');shake();return;}S.challenge=ch;makeRound();}
+function shake(){const b=$('lockbtn');b.style.animation='shake .4s';b.addEventListener('animationend',()=>b.style.animation='',{once:true});}
+function makeRound(){const now=new Date();const data=build(S.mode,S.challenge,S.players,S.grownup);
+  S.round={id:rid(),challenge:S.challenge,mode:S.mode,players:S.players,phrase:data.full,data,lockedAt:now.toISOString(),revealedAt:null};
+  if(!S.scores.length||S.scores.length!==S.players)initScores();
+  $('l-id').textContent=S.round.id;$('l-time').textContent=fmt(now);$('l-ch').textContent=S.challenge;$('l-mode').textContent=NAMES[S.mode];$('l-players').textContent=S.players+' players';
+  $('l-seal').textContent=seal(S.round);
+  $('a-mode').textContent=NAMES[S.mode];$('a-ch').textContent=S.challenge;$('act').className='act m-'+S.mode;
+  go('locked');}
+function seal(r){let h=0;const s=r.id+r.phrase+r.lockedAt;for(let i=0;i<s.length;i++)h=(h*31+s.charCodeAt(i))>>>0;return '#'+h.toString(16).slice(0,6).toUpperCase();}
+function playAgain(){makeRound();}
+function surpriseMe(){S.mode=pick(['funny','winning','dare','chaos']);S.challenge=pick(ALL);makeRound();toast(`🎲 ${S.challenge} · ${NAMES[S.mode]}`);}
+
+/* ---------- TIMER (guide only, never auto-reveals) ---------- */
+let tI=null,tRem=10;
+function startTimer(){tRem=S.timer;paintTimer();clearInterval(tI);tI=setInterval(()=>{tRem--;paintTimer();if(tRem<=3&&tRem>0)snd('tick');if(tRem<=0){clearInterval(tI);tI=null;snd('boing');}},1000);}
+function stopTimer(){clearInterval(tI);tI=null;tRem=S.timer;paintTimer();}
+function paintTimer(){const n=$('tnum'),r=$('ring');if(!n)return;n.textContent=Math.max(0,tRem);n.classList.toggle('done',tRem<=0);r.style.strokeDashoffset=364*(1-Math.max(0,Math.min(1,tRem/S.timer)));r.style.stroke=tRem<=3?'#EE6352':'#FFC93C';}
+function adjTimer(d){S.timer=Math.max(5,Math.min(60,S.timer+d));startTimer();}
+
+/* ---------- REVEAL ---------- */
+let stages=[],idx=0,tmr=null,done=false;
+function doReveal(){if(!S.round)return;const r=S.round;r.revealedAt=new Date().toISOString();saveHistory(r);
+  stages=r.data.stages;idx=0;done=false;$('rev').className='rev m-'+r.mode;$('stage').style.display='flex';$('hint').style.display='block';$('final').classList.remove('show');
+  $('dots').innerHTML=stages.map((_,i)=>`<span class="dot" id="d${i}"></span>`).join('');go('reveal');setTimeout(()=>show(0),250);}
+function show(i){if(i>=stages.length){finish();return;}idx=i;const s=stages[i],e=$('st-text');e.style.opacity=0;setTimeout(()=>{e.className='st '+s.c;e.textContent=s.t;e.style.opacity=1;document.querySelectorAll('.dot').forEach((d,k)=>d.classList.toggle('on',k===i));if(s.s)snd(s.s);},100);
+  tmr=setTimeout(()=>s.final?finish():show(i+1),s.final?1300:s.d);}
+function advance(){if(done)return;clearTimeout(tmr);idx++;idx>=stages.length?finish():show(idx);}
+function finish(){if(done)return;done=true;clearTimeout(tmr);const r=S.round;$('stage').style.display='none';$('dots').innerHTML='';$('hint').style.display='none';
+  $('f-phrase').textContent=r.phrase;$('f-tag').textContent=NAMES[r.mode];$('f-emoji').textContent=r.data.emoji;renderWho();$('final').classList.add('show');snd(r.data.sound);setTimeout(confetti,150);}
+
+/* ---------- SCORES ---------- */
+function initScores(){S.scores=Array.from({length:S.players},(_,i)=>({a:AV[i],n:0}));}
+function renderScores(){const el=$('scores-home');if(!el)return;if(!S.scores.some(s=>s.n))return el.innerHTML='';const mx=Math.max(...S.scores.map(s=>s.n));el.innerHTML=S.scores.map(s=>`<div class="score ${s.n===mx?'lead':''}"><div class="a">${s.a}</div>${s.n}</div>`).join('')+`<button class="btn-ghost" onclick="S.scores.forEach(s=>s.n=0);renderScores()">reset</button>`;}
+function renderWho(){$('who-row').innerHTML=S.scores.map((s,i)=>`<button onclick="score(${i},this)">${s.a}</button>`).join('');}
+function score(i,b){S.scores[i].n++;document.querySelectorAll('#who-row button').forEach(x=>x.classList.remove('hit'));b.classList.add('hit');snd('tick');}
+
+/* ---------- HISTORY ---------- */
+function saveHistory(r){let h=loadHistory();h.unshift({id:r.id,challenge:r.challenge,mode:r.mode,players:r.players,phrase:r.phrase,lockedAt:r.lockedAt,revealedAt:r.revealedAt});if(h.length>50)h=h.slice(0,50);try{localStorage.setItem('bbco_whowins',JSON.stringify(h));}catch(e){}}
+function loadHistory(){try{return JSON.parse(localStorage.getItem('bbco_whowins')||'[]');}catch(e){return[];}}
+function esc(s){return String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));}
+function renderHistory(){const h=loadHistory(),el=$('hist');if(!h.length){el.innerHTML='<div class="empty">📭<br>No rounds yet. Play one first!</div>';return;}
+  el.innerHTML=h.map(r=>`<div class="hcard"><div class="m"><span>${r.id}</span><span>${fmt(new Date(r.lockedAt))}</span></div><div class="c">🎯 ${esc(r.challenge)}</div><div class="p">${esc(r.phrase)}</div><div class="m"><span>${NAMES[r.mode]}</span><span>👥 ${r.players}</span></div></div>`).join('')+`<button class="btn" onclick="if(confirm('Clear all history?')){localStorage.removeItem('bbco_whowins');renderHistory();}">🗑️ Clear history</button>`;}
+
+/* ---------- SOUND ---------- */
+let AC=null;function ac(){if(!AC){try{AC=new(window.AudioContext||window.webkitAudioContext)();}catch(e){}}if(AC&&AC.state==='suspended')AC.resume();return AC;}
+function tone(f,t0,d,type='sine',g0=.3){const c=ac();if(!c)return;const o=c.createOscillator(),g=c.createGain();o.type=type;o.connect(g);g.connect(c.destination);o.frequency.setValueAtTime(f,t0);g.gain.setValueAtTime(g0,t0);g.gain.exponentialRampToValueAtTime(.001,t0+d);o.start(t0);o.stop(t0+d+.01);}
+function snd(k){const c=ac();if(!c)return;const n=c.currentTime;
+  if(k==='tick')tone(900,n,.08);
+  if(k==='drum')for(let i=0;i<16;i++)tone(55+Math.random()*30,n+i*.055,.05,'sawtooth',.12);
+  if(k==='fanfare')[[523,0],[659,.14],[784,.28],[1047,.42],[784,.6],[1047,.75]].forEach(([f,d])=>tone(f,n+d,.28,'triangle',.35));
+  if(k==='boing'){const o=c.createOscillator(),g=c.createGain();o.connect(g);g.connect(c.destination);o.frequency.setValueAtTime(700,n);o.frequency.exponentialRampToValueAtTime(80,n+.7);g.gain.setValueAtTime(.4,n);g.gain.exponentialRampToValueAtTime(.001,n+.7);o.start(n);o.stop(n+.72);}
+  if(k==='funny')[[400,0],[500,.12],[350,.24]].forEach(([f,d])=>tone(f,n+d,.1,'square',.15));
+  if(k==='chaos')for(let i=0;i<6;i++)tone(150+Math.random()*900,n+i*.09,.08,'square',.18);}
+
+/* ---------- CONFETTI ---------- */
+const cv=$('confetti'),cx=cv.getContext('2d');let ps=[],run=false;
+function confetti(){cv.width=innerWidth;cv.height=innerHeight;ps=[];const col=['#EE6352','#FFC93C','#7FB77E','#BFE3F4','#164A78','#E4722F'];for(let i=0;i<120;i++)ps.push({x:Math.random()*cv.width,y:-20-Math.random()*100,w:4+Math.random()*12,h:3+Math.random()*8,c:pick(col),vx:Math.random()*5-2.5,vy:2+Math.random()*4,r:Math.random()*360,rv:Math.random()*12-6,o:1});if(!run){run=true;anim();}}
+function anim(){if(!run)return;cx.clearRect(0,0,cv.width,cv.height);ps=ps.filter(p=>p.o>.01&&p.y<cv.height+20);if(!ps.length){run=false;return;}ps.forEach(p=>{p.x+=p.vx;p.y+=p.vy;p.r+=p.rv;if(p.y>cv.height*.6)p.o-=.018;cx.save();cx.translate(p.x,p.y);cx.rotate(p.r*Math.PI/180);cx.globalAlpha=Math.max(0,p.o);cx.fillStyle=p.c;cx.fillRect(-p.w/2,-p.h/2,p.w,p.h);cx.restore();});requestAnimationFrame(anim);}
+
+/* ---------- INIT ---------- */
+paintPlayers();renderCats();renderIdeas();
+</script>
+</body>
+</html>
