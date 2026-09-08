@@ -193,7 +193,7 @@ const QUESTIONS=[
  {q:'What is a quarter of 20?',a:['4','5','10'],c:1,h:'Share twenty into four groups.'}
 ]];
 /* Levels are data too: obstacles per run, speed, where questions land (fraction of route). */
-const LEVEL={obstacles:10,speed:[1.6,2.0,2.4],questionsAt:[0,0.5],endQuestion:true};
+const LEVEL={obstacles:10,speed:[2.0,2.4,2.8],questionsAt:[0,0.5],endQuestion:true};
 
 /* ---------- STATE ---------- */
 const $=id=>document.getElementById(id);
@@ -307,8 +307,19 @@ function draw(){
   cx.fillStyle='#1F4D3A';cx.fillRect(0,GROUND,W,3);
   // obstacles
   for(const o of G.obs){
-    if(o.type==='log'){cx.fillStyle='#8B5A2B';cx.strokeStyle='#1F4D3A';cx.lineWidth=3;cx.beginPath();cx.roundRect(o.x,GROUND-26,50,26,8);cx.fill();cx.stroke();cx.fillStyle='#C9A46A';cx.beginPath();cx.arc(o.x+50,GROUND-13,8,0,7);cx.fill();}
-    else{cx.strokeStyle='#8B5A2B';cx.lineWidth=10;cx.lineCap='round';cx.beginPath();cx.moveTo(o.x+60,0);cx.lineTo(o.x+10,GROUND-64);cx.stroke();cx.fillStyle='#2E6B4F';cx.beginPath();cx.arc(o.x+10,GROUND-64,16,0,7);cx.arc(o.x+34,GROUND-84,14,0,7);cx.fill();}
+    const near=o.x<470;const glow=near&&Math.floor(G.dog.frame*3)%2===0;
+    if(o.type==='log'){
+      if(near){cx.fillStyle='rgba(255,201,60,.55)';cx.beginPath();cx.ellipse(o.x+25,GROUND-12,44,30,0,0,7);cx.fill();}
+      cx.fillStyle='#E4722F';cx.strokeStyle='#1F4D3A';cx.lineWidth=4;cx.beginPath();cx.roundRect(o.x,GROUND-28,52,28,9);cx.fill();cx.stroke();
+      cx.fillStyle='#FFC93C';cx.beginPath();cx.arc(o.x+52,GROUND-14,9,0,7);cx.fill();cx.stroke();
+      cx.fillStyle='#1F4D3A';cx.font='bold 22px Fredoka,sans-serif';cx.textAlign='center';cx.fillText('⬆',o.x+26,GROUND-38);
+    }else{
+      if(near){cx.fillStyle='rgba(255,201,60,.55)';cx.beginPath();cx.ellipse(o.x+22,GROUND-76,46,34,0,0,7);cx.fill();}
+      cx.strokeStyle='#E4722F';cx.lineWidth=12;cx.lineCap='round';cx.beginPath();cx.moveTo(o.x+62,0);cx.lineTo(o.x+10,GROUND-62);cx.stroke();
+      cx.strokeStyle='#1F4D3A';cx.lineWidth=3;cx.beginPath();cx.moveTo(o.x+62,0);cx.lineTo(o.x+10,GROUND-62);cx.stroke();
+      cx.fillStyle='#EE6352';cx.strokeStyle='#1F4D3A';cx.lineWidth=3;cx.beginPath();cx.arc(o.x+10,GROUND-62,17,0,7);cx.fill();cx.stroke();cx.beginPath();cx.arc(o.x+34,GROUND-84,14,0,7);cx.fill();cx.stroke();
+      cx.fillStyle='#1F4D3A';cx.font='bold 22px Fredoka,sans-serif';cx.textAlign='center';cx.fillText('⬇',o.x+22,GROUND-108);
+    }
   }
   // dog
   drawDog(110,GROUND-6+G.dog.y,G.dog.duck>0,G.dog.bump,G.dog.frame);
