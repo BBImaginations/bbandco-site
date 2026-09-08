@@ -1,0 +1,2 @@
+{"name":"Lost in the Woods – BB & Co Imaginations","short_name":"Lost in Woods","description":"Help BB the dog find the way home.","start_url":"./lost-in-the-woods.html","scope":"./lost-in-the-woods","display":"standalone","orientation":"portrait","background_color":"#7FB77E","theme_color":"#1F4D3A",
+"icons":[{"src":"icons/woods-192.png","sizes":"192x192","type":"image/png"},{"src":"icons/woods-512.png","sizes":"512x512","type":"image/png"},{"src":"icons/woods-maskable-512.png","sizes":"512x512","type":"image/png","purpose":"maskable"}]}

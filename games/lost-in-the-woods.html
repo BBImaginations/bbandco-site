@@ -1,0 +1,333 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+<title>Lost in the Woods – help BB find the way home | BB & Co Imaginations</title>
+<meta name="description" content="Answer a question to unlock the map, then help BB the dog jump and duck through the woods to get home. A quick game for ages 4 to 9.">
+<link rel="icon" href="../assets/icon.png" type="image/png">
+<link rel="manifest" href="lost-in-the-woods.webmanifest">
+<link rel="apple-touch-icon" href="icons/woods-180.png">
+<meta name="theme-color" content="#1F4D3A">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Lost in the Woods">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--paper:#FFF8EC;--ink:#1F4D3A;--ink-soft:#3F6B58;--sun:#FFC93C;--coral:#EE6352;--sky:#BFE3F4;--leaf:#7FB77E;--white:#fff;--display:'Fredoka',system-ui,sans-serif;--body:'Nunito',system-ui,sans-serif}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;user-select:none}
+html,body{height:100%}
+body{font-family:var(--body);background:var(--paper);color:var(--ink);font-size:17px;line-height:1.5;overflow:hidden}
+button{font:inherit;cursor:pointer;color:inherit}
+canvas#confetti{position:fixed;inset:0;pointer-events:none;z-index:99}
+.screen{position:fixed;inset:0;display:none;flex-direction:column;overflow-y:auto}
+.screen.active{display:flex;animation:in .25s ease}
+@keyframes in{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+.wrap{width:100%;max-width:520px;margin:0 auto;padding:20px;flex:1;display:flex;flex-direction:column}
+.gbrand{display:flex;justify-content:center;padding:10px 12px 0}
+.gbrand a{display:inline-block;background:var(--white);border:3px solid var(--ink);border-radius:999px;padding:6px 14px;line-height:0}
+.gbrand img{height:26px;width:auto;display:block}
+h1,h2,h3{font-family:var(--display);font-weight:600;line-height:1.1}
+.btn{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;padding:16px 20px;border-radius:999px;border:3px solid var(--ink);background:var(--white);color:var(--ink);font-family:var(--display);font-weight:600;font-size:1.15rem;transition:transform .12s}
+.btn:active{transform:scale(.97)}
+.btn-coral{background:var(--coral);color:var(--white)}.btn-ink{background:var(--ink);color:var(--white)}.btn-sun{background:var(--sun)}
+.btn-ghost{background:none;border:0;color:var(--ink-soft);font-size:1rem;padding:10px;font-weight:700}
+.stack{display:flex;flex-direction:column;gap:12px;width:100%;max-width:340px;margin:0 auto}
+.brand-link{font-size:.85rem;color:var(--ink-soft);text-decoration:none;font-weight:700;text-align:center;display:block}
+/* HOME */
+.home{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:16px;padding:24px;background:var(--leaf)}
+.home>*{max-width:520px}
+.home h1{font-size:clamp(2.2rem,10vw,3.4rem)}.home h1 span{color:var(--sun)}
+.ages{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;width:100%;max-width:340px}
+.age{padding:14px 6px;border:3px solid var(--ink);border-radius:18px;background:var(--white);font-family:var(--display);font-weight:600;font-size:1.05rem;display:flex;flex-direction:column;gap:2px}
+.age small{font-family:var(--body);font-size:.75rem;color:var(--ink-soft);font-weight:700}
+.age.on{background:var(--sun)}
+/* PLAY */
+#s-play{background:var(--sky)}
+.playwrap{width:100%;max-width:520px;margin:0 auto;padding:10px 12px 16px;display:flex;flex-direction:column;gap:10px;flex:1}
+.hud{display:flex;align-items:center;gap:10px}
+.hud .gbrand{padding:0}.hud .gbrand img{height:22px}.hud .gbrand a{padding:4px 10px;border-width:2px}
+.map{flex:1;display:flex;gap:3px}
+.map i{flex:1;height:12px;border:2px solid var(--ink);border-radius:6px;background:var(--white)}
+.map i.on{background:var(--coral)}.map i.q{background:var(--sun)}
+.stage{position:relative;border:3px solid var(--ink);border-radius:18px;overflow:hidden;background:#DCEFF7;box-shadow:6px 6px 0 var(--ink)}
+canvas#game{display:block;width:100%;height:auto}
+.warn{position:absolute;right:14px;top:14px;font-family:var(--display);font-weight:700;font-size:1.1rem;padding:6px 14px;border-radius:999px;background:var(--sun);border:3px solid var(--ink);display:none;animation:blink .5s infinite}
+.warn.show{display:block}
+@keyframes blink{50%{opacity:.4}}
+.msg{position:absolute;left:0;right:0;top:12px;text-align:center;font-family:var(--display);font-weight:700;font-size:1.3rem;color:var(--ink);pointer-events:none;text-shadow:0 2px 0 #fff}
+.bubble{position:absolute;left:8%;right:8%;top:8%;background:var(--white);border:3px solid var(--ink);border-radius:20px;padding:14px;display:none;flex-direction:column;gap:10px;box-shadow:4px 4px 0 var(--ink)}
+.bubble.show{display:flex}
+.bubble::after{content:"";position:absolute;left:78px;bottom:-16px;border:10px solid transparent;border-top-color:var(--ink);border-bottom:0}
+.bubble .q{font-family:var(--display);font-weight:600;font-size:1.25rem;text-align:center;line-height:1.2}
+.bubble .pic{font-size:1.9rem;text-align:center;letter-spacing:4px}
+.answers{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.ans{padding:12px 4px;border:3px solid var(--ink);border-radius:14px;background:var(--paper);font-family:var(--display);font-weight:600;font-size:1.3rem;line-height:1}
+.ans.no{background:var(--coral);color:#fff;animation:wob .4s}.ans.yes{background:var(--leaf)}
+@keyframes wob{25%{transform:rotate(-4deg)}75%{transform:rotate(4deg)}}
+.bubble .hint{font-size:.9rem;color:var(--ink-soft);text-align:center;font-weight:700;min-height:1.2em}
+.controls{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.ctl{padding:22px 10px;border:3px solid var(--ink);border-radius:20px;background:var(--white);font-family:var(--display);font-weight:700;font-size:1.4rem;display:flex;flex-direction:column;align-items:center;gap:2px;box-shadow:4px 4px 0 var(--ink);transition:transform .08s}
+.ctl:active{transform:translate(2px,2px);box-shadow:2px 2px 0 var(--ink)}
+.ctl small{font-family:var(--body);font-size:.75rem;color:var(--ink-soft);font-weight:800;letter-spacing:.08em}
+.ctl.jump{background:var(--sun)}.ctl.duck{background:var(--sky)}
+.ctl.go{grid-column:1/-1;background:var(--coral);color:#fff}.ctl.go small{color:#fff}
+/* END */
+.end{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:14px;padding:24px;background:var(--sun)}
+.end>*{max-width:520px;width:100%}
+.medal{width:140px;height:140px;border-radius:50%;background:var(--white);border:4px solid var(--ink);display:flex;align-items:center;justify-content:center;font-size:70px;margin:0 auto;box-shadow:6px 6px 0 var(--ink);animation:pop .5s cubic-bezier(.34,1.56,.64,1)}
+@keyframes pop{from{transform:scale(0) rotate(-15deg)}}
+.bookcard{display:flex;gap:14px;align-items:center;background:var(--white);border:3px solid var(--ink);border-radius:18px;padding:12px 14px;text-align:left;text-decoration:none;color:var(--ink)}
+.bookcard img{width:72px;height:72px;object-fit:cover;border:3px solid var(--ink);border-radius:10px;flex:none}
+.bookcard b{font-family:var(--display);font-weight:600;display:block}
+.bookcard span{font-size:.85rem;color:var(--ink-soft);font-weight:700}
+.stat{font-family:var(--display);font-weight:600;font-size:1.1rem}
+</style>
+</head>
+<body>
+<canvas id="confetti"></canvas>
+
+<!-- HOME -->
+<section class="screen active" id="s-home">
+  <div class="home">
+    <div class="gbrand" style="padding:0"><a href="../games.html"><img src="../assets/logo-wide.png" alt="BB & Co Imaginations"></a></div>
+    <canvas id="hero" width="300" height="130" style="max-width:300px;width:100%"></canvas>
+    <h1>Lost in the <span>Woods</span></h1>
+    <p style="font-weight:600;max-width:32ch">BB has lost the path. Answer a question to unlock the map, then jump and duck to get home.</p>
+    <div class="ages" id="ages">
+      <button class="age" onclick="setAge(0,this)">4–5<small>little explorer</small></button>
+      <button class="age" onclick="setAge(1,this)">6–7<small>path finder</small></button>
+      <button class="age" onclick="setAge(2,this)">8–9<small>woods expert</small></button>
+    </div>
+    <div class="stack"><button class="btn btn-coral" id="startbtn" disabled onclick="startGame()">🐾 Start</button></div>
+    <a class="brand-link" href="../games.html">Back to BB &amp; Co Imaginations</a>
+  </div>
+</section>
+
+<!-- PLAY -->
+<section class="screen" id="s-play">
+  <div class="playwrap">
+    <div class="hud">
+      <div class="gbrand"><a href="../games.html"><img src="../assets/logo-wide.png" alt="BB & Co Imaginations"></a></div>
+      <div class="map" id="map"></div>
+    </div>
+    <div class="stage">
+      <canvas id="game" width="480" height="420"></canvas>
+      <div class="msg" id="msg"></div>
+      <div class="warn" id="warn">⚠️</div>
+      <div class="bubble" id="bubble">
+        <div class="pic" id="q-pic"></div>
+        <div class="q" id="q-text"></div>
+        <div class="answers" id="q-ans"></div>
+        <div class="hint" id="q-hint"></div>
+      </div>
+    </div>
+    <div class="controls" id="controls">
+      <button class="ctl go" id="gobtn" onclick="walk()">▶ Walk<small>TAP TO GO</small></button>
+      <button class="ctl jump" onclick="jump()">⬆️ Jump<small>OVER LOGS</small></button>
+      <button class="ctl duck" onclick="duck()">⬇️ Duck<small>UNDER BRANCHES</small></button>
+    </div>
+  </div>
+</section>
+
+<!-- END -->
+<section class="screen" id="s-end">
+  <div class="end">
+    <div class="gbrand" style="padding:0"><a href="../games.html"><img src="../assets/logo-wide.png" alt="BB & Co Imaginations"></a></div>
+    <div class="medal">🏡</div>
+    <h1>BB is home!</h1>
+    <p class="stat" id="e-stat"></p>
+    <a class="bookcard" href="https://www.amazon.co.uk/dp/B0G2JV918W" target="_blank" rel="noopener">
+      <img src="../assets/covers/lost-in-the-woods.jpg" alt="">
+      <div><b>Read the real story</b><span>The Adventures of Logan and Louis: Lost in the Woods</span></div>
+    </a>
+    <div class="stack">
+      <button class="btn btn-ink" onclick="startGame()">🐾 Play again</button>
+      <button class="btn" onclick="go('home')">Change age</button>
+    </div>
+    <a class="brand-link" href="../games.html">More games from BB &amp; Co Imaginations</a>
+  </div>
+</section>
+
+<script>
+/* =========================================================
+   QUESTIONS — one list per age band. Add freely.
+   {q:'text', pic:'emoji shown above (optional)', a:['opt','opt','opt'], c:index of correct, h:'hint after a wrong go'}
+========================================================= */
+const QUESTIONS=[
+[ // 4–5
+ {q:'How many acorns?',pic:'🌰🌰🌰',a:['2','3','4'],c:1,h:'Count them on your fingers.'},
+ {q:'What is 2 + 2?',pic:'🐾🐾 + 🐾🐾',a:['3','4','5'],c:1,h:'Two paws and two more paws.'},
+ {q:'Which one is red?',a:['🍎','🍌','🥦'],c:0,h:'Think of a fire engine.'},
+ {q:'How many birds?',pic:'🐦🐦🐦🐦',a:['4','5','3'],c:0,h:'Point to each one as you count.'},
+ {q:'Which is the biggest?',a:['🐁','🐈','🐘'],c:2,h:'Which one could you ride?'},
+ {q:'What is 1 + 3?',pic:'🍄 + 🍄🍄🍄',a:['4','2','5'],c:0,h:'One mushroom, then three more.'},
+ {q:'Which animal says woof?',a:['🐱','🐶','🐮'],c:1,h:'It is BB!'},
+ {q:'What comes after 5?',pic:'1 2 3 4 5 ?',a:['7','6','4'],c:1,h:'Count up slowly.'},
+ {q:'Which shape is a circle?',a:['🔺','🟦','🟢'],c:2,h:'Round like a ball.'},
+ {q:'What is 3 − 1?',pic:'🍓🍓🍓 take away 1',a:['2','3','1'],c:0,h:'Three berries, eat one.'}
+],
+[ // 6–7
+ {q:'What is 7 + 5?',a:['11','12','13'],c:1,h:'Seven, then count on five.'},
+ {q:'What is 15 − 6?',a:['9','8','10'],c:0,h:'Take away five, then one more.'},
+ {q:'Which number is odd?',a:['8','14','9'],c:2,h:'Odd numbers can’t be shared fairly by two.'},
+ {q:'Which word says DOG?',a:['DIG','DOG','DUG'],c:1,h:'Look for the letter O in the middle.'},
+ {q:'Double 6 is…',a:['12','10','16'],c:0,h:'Six and six again.'},
+ {q:'How many legs on 2 dogs?',pic:'🐶🐶',a:['6','8','4'],c:1,h:'Four legs each.'},
+ {q:'Which is a vegetable?',a:['🥕','🍰','🍭'],c:0,h:'It grows in the ground.'},
+ {q:'What is 4 + 4 + 4?',a:['8','12','16'],c:1,h:'Four, eight, then one more four.'},
+ {q:'Which month is Christmas in?',a:['July','December','March'],c:1,h:'The last month of the year.'},
+ {q:'Half of 10 is…',a:['5','2','20'],c:0,h:'Share ten between two.'}
+],
+[ // 8–9
+ {q:'What is 6 × 7?',a:['42','36','48'],c:0,h:'Six sevens. Count in sevens.'},
+ {q:'What is 9 × 4?',a:['32','36','45'],c:1,h:'Ten fours, then take away one four.'},
+ {q:'Which word rhymes with WOOD?',a:['GOOD','WORD','WIDE'],c:0,h:'Say them out loud.'},
+ {q:'On a compass, which is opposite North?',a:['East','West','South'],c:2,h:'Think of a map.'},
+ {q:'What is 100 − 37?',a:['63','73','67'],c:0,h:'Take away 30, then 7.'},
+ {q:'Which animal is nocturnal?',a:['🦉','🐔','🐝'],c:0,h:'Awake at night, asleep by day.'},
+ {q:'How many minutes in 2 hours?',a:['100','120','60'],c:1,h:'Sixty in one hour.'},
+ {q:'What is 8 × 8?',a:['64','56','72'],c:0,h:'Eight eights.'},
+ {q:'Which is a mammal?',a:['🐍','🐸','🦊'],c:2,h:'Fur, and feeds its babies milk.'},
+ {q:'What is a quarter of 20?',a:['4','5','10'],c:1,h:'Share twenty into four groups.'}
+]];
+/* Levels are data too: obstacles per run, speed, where questions land (fraction of route). */
+const LEVEL={obstacles:10,speed:3.2,questionsAt:[0,0.5],endQuestion:true};
+
+/* ---------- STATE ---------- */
+const $=id=>document.getElementById(id);
+const pick=a=>a[Math.floor(Math.random()*a.length)];
+let age=0,G=null,raf=null;
+function go(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));$('s-'+id).classList.add('active');snd('click');if(id!=='play')cancelAnimationFrame(raf);}
+function setAge(i,el){age=i;document.querySelectorAll('.age').forEach(a=>a.classList.remove('on'));el.classList.add('on');$('startbtn').disabled=false;snd('pick');}
+
+/* ---------- GAME SETUP ---------- */
+const cv=$('game'),CX=cv.getContext('2d'),cx=CX;const W=cv.width,H=cv.height,GROUND=H-70;
+function startGame(){
+  G={x:0,speed:LEVEL.speed,walking:false,done:0,total:LEVEL.obstacles,obs:[],nextGap:260,bumps:0,asked:new Set(),qDue:[...LEVEL.questionsAt],inQ:false,
+     dog:{y:0,vy:0,duck:0,bump:0,frame:0},trees:Array.from({length:14},(_,i)=>({x:i*90+Math.random()*40,h:120+Math.random()*90,d:Math.random()<.5?.4:.7})),msg:'',msgT:0,finished:false};
+  paintMap();$('warn').classList.remove('show');$('bubble').classList.remove('show');$('gobtn').style.display='flex';
+  go('play');loop();
+  setTimeout(()=>askQuestion('Answer to unlock the map!'),400);
+}
+function paintMap(){$('map').innerHTML=Array.from({length:G.total},(_,i)=>`<i class="${i<G.done?'on':''}"></i>`).join('');}
+function walk(){if(G.inQ||G.finished)return;G.walking=true;$('gobtn').style.display='none';snd('go');}
+function jump(){if(G.inQ||!G.walking)return;if(G.dog.y===0){G.dog.vy=-11;snd('pick');}}
+function duck(){if(G.inQ||!G.walking)return;G.dog.duck=28;snd('click');}
+
+/* ---------- QUESTIONS ---------- */
+function askQuestion(intro){
+  G.inQ=true;G.walking=false;$('gobtn').style.display='none';
+  const pool=QUESTIONS[age].filter((_,i)=>!G.asked.has(i));const idx=QUESTIONS[age].indexOf(pick(pool.length?pool:QUESTIONS[age]));G.asked.add(idx);const q=QUESTIONS[age][idx];
+  $('q-pic').textContent=q.pic||'';$('q-text').textContent=q.q;$('q-hint').textContent=intro||'';
+  $('q-ans').innerHTML=q.a.map((a,i)=>`<button class="ans" onclick="answer(${i},${q.c},this)">${a}</button>`).join('');
+  $('bubble').classList.add('show');snd('funny');
+}
+function answer(i,c,el){
+  if(i===c){el.classList.add('yes');snd('fanfare');$('q-hint').textContent=pick(['Brilliant! 🌟','You got it! 🐾','Clever cookie! 🎉','Yes! Map unlocked 🗺️']);
+    setTimeout(()=>{$('bubble').classList.remove('show');G.inQ=false;if(G.finished){finishGame();return;}$('gobtn').style.display='flex';setMsg('Tap Walk ▶');},900);
+  }else{el.classList.add('no');setTimeout(()=>el.classList.remove('no'),400);const q=QUESTIONS[age].find(x=>x.q===$('q-text').textContent);$('q-hint').textContent='Not quite. '+(q?q.h:'Try again!');snd('funny');}
+}
+
+/* ---------- LOOP ---------- */
+function setMsg(t){G.msg=t;G.msgT=90;}
+function loop(){raf=requestAnimationFrame(loop);update();draw();}
+function update(){
+  const d=G.dog;
+  // physics
+  if(d.y<0||d.vy<0){d.vy+=.55;d.y+=d.vy;if(d.y>0){d.y=0;d.vy=0;}}
+  if(d.duck>0)d.duck--; if(d.bump>0)d.bump--;
+  if(G.msgT>0)G.msgT--;
+  if(!G.walking||G.inQ)return;
+  G.x+=G.speed;d.frame+=.25;
+  // spawn
+  const spawned=G.obs.length+G.done;
+  const lastX=G.obs.length?G.obs[G.obs.length-1].x:-9999;
+  if(spawned<G.total&&lastX<W-G.nextGap){G.obs.push({x:W+60,type:Math.random()<.5?'log':'branch',hit:false,passed:false});G.nextGap=220+Math.random()*120;}
+  // move obstacles
+  $('warn').classList.toggle('show',G.obs.some(o=>o.x>200&&o.x<400&&!o.hit));
+  const wo=G.obs.find(o=>o.x>200&&o.x<400&&!o.hit);if(wo)$('warn').textContent=wo.type==='log'?'⬆️ Jump!':'⬇️ Duck!';
+  for(const o of G.obs){o.x-=G.speed;
+    const dogX=110,dogR=dogX+44;
+    if(!o.hit&&!o.passed&&o.x<dogR&&o.x+50>dogX){
+      const safe=o.type==='log'?d.y<-22:d.duck>0;
+      if(!safe){o.hit=true;d.bump=30;G.bumps++;G.walking=false;snd('bump');setMsg(pick(['Oops! Try again','Bump! Watch the warning','Ouch! Nearly']));
+        setTimeout(()=>{G.obs=G.obs.filter(x=>x!==o);G.done++;paintMap();$('gobtn').style.display='flex';},700);}
+      else{o.passed=true;G.done++;paintMap();snd('tick');}
+    }}
+  G.obs=G.obs.filter(o=>o.x>-80);
+  // mid-route questions
+  const frac=G.done/G.total;
+  if(G.qDue.length&&frac>=G.qDue[0]&&G.qDue[0]>0){G.qDue.shift();setTimeout(()=>askQuestion('One more to open the path!'),200);}
+  if(G.qDue.length&&G.qDue[0]===0)G.qDue.shift();
+  // finish
+  if(G.done>=G.total&&!G.obs.some(o=>!o.passed&&!o.hit)&&!G.finished){G.finished=true;G.walking=false;if(LEVEL.endQuestion)setTimeout(()=>askQuestion('Last one: which way is home?'),400);else finishGame();}
+}
+function finishGame(){snd('fanfare');$('e-stat').textContent=G.bumps===0?'Not a single bump. Perfect path finding! 🌟':`Home safe with ${G.bumps} little bump${G.bumps>1?'s':''}. Well done! 🐾`;go('end');setTimeout(confetti,200);}
+
+/* ---------- DRAW ---------- */
+function drawTree(x,base,h,dark,cx=CX){const c=dark?'#2E6B4F':'#7FB77E';cx.fillStyle='#8B5A2B';cx.fillRect(x-6,base-h*.35,12,h*.35);cx.fillStyle=c;for(let i=0;i<3;i++){const w=60-i*14,y=base-h*.3-i*h*.22;cx.beginPath();cx.moveTo(x-w/2,y);cx.lineTo(x,y-h*.32);cx.lineTo(x+w/2,y);cx.closePath();cx.fill();}}
+function drawDog(x,y,duck,bump,frame,cx=CX){
+  const sq=duck?0.6:1;cx.save();cx.translate(x,y);if(bump&&Math.floor(bump/3)%2)cx.globalAlpha=.5;
+  cx.scale(1,sq);
+  // legs
+  cx.strokeStyle='#8B5A2B';cx.lineWidth=7;cx.lineCap='round';const lg=Math.sin(frame*4)*8;
+  cx.beginPath();cx.moveTo(10,-4);cx.lineTo(8+lg,16);cx.moveTo(24,-4);cx.lineTo(26-lg,16);cx.moveTo(38,-4);cx.lineTo(40+lg,16);cx.moveTo(50,-4);cx.lineTo(52-lg,16);cx.stroke();
+  // body
+  cx.fillStyle='#fff';cx.strokeStyle='#1F4D3A';cx.lineWidth=3;cx.beginPath();cx.ellipse(30,-14,32,17,0,0,7);cx.fill();cx.stroke();
+  cx.fillStyle='#8B5A2B';cx.beginPath();cx.ellipse(18,-18,16,11,0,0,7);cx.fill();
+  // tail
+  cx.strokeStyle='#8B5A2B';cx.lineWidth=6;cx.beginPath();cx.moveTo(-2,-20);cx.quadraticCurveTo(-14,-34+Math.sin(frame*6)*4,-8,-42);cx.stroke();
+  // head
+  cx.fillStyle='#fff';cx.strokeStyle='#1F4D3A';cx.lineWidth=3;cx.beginPath();cx.ellipse(58,-30,18,16,0,0,7);cx.fill();cx.stroke();
+  cx.fillStyle='#8B5A2B';cx.beginPath();cx.ellipse(46,-38,10,14,.6,0,7);cx.fill();// ear
+  cx.fillStyle='#1F4D3A';cx.beginPath();cx.arc(74,-30,3.5,0,7);cx.fill();cx.beginPath();cx.arc(62,-34,2.5,0,7);cx.fill();
+  // bandana
+  cx.fillStyle='#4A90D9';cx.beginPath();cx.moveTo(42,-20);cx.lineTo(58,-14);cx.lineTo(52,-2);cx.closePath();cx.fill();
+  cx.restore();
+}
+function draw(){
+  cx.clearRect(0,0,W,H);
+  // sky + sun
+  cx.fillStyle='#DCEFF7';cx.fillRect(0,0,W,H);cx.fillStyle='#FFC93C';cx.beginPath();cx.arc(W-70,60,26,0,7);cx.fill();
+  // trees (parallax)
+  for(const t of G.trees){const px=((t.x-G.x*t.d)%(W+140)+W+140)%(W+140)-70;drawTree(px,GROUND+6,t.h,t.d>.5);}
+  // ground
+  cx.fillStyle='#7FB77E';cx.fillRect(0,GROUND,W,H-GROUND);cx.fillStyle='#C9A46A';cx.fillRect(0,GROUND+18,W,26);
+  cx.fillStyle='#1F4D3A';cx.fillRect(0,GROUND,W,3);
+  // obstacles
+  for(const o of G.obs){
+    if(o.type==='log'){cx.fillStyle='#8B5A2B';cx.strokeStyle='#1F4D3A';cx.lineWidth=3;cx.beginPath();cx.roundRect(o.x,GROUND-26,50,26,8);cx.fill();cx.stroke();cx.fillStyle='#C9A46A';cx.beginPath();cx.arc(o.x+50,GROUND-13,8,0,7);cx.fill();}
+    else{cx.strokeStyle='#8B5A2B';cx.lineWidth=10;cx.lineCap='round';cx.beginPath();cx.moveTo(o.x+60,0);cx.lineTo(o.x+10,GROUND-64);cx.stroke();cx.fillStyle='#2E6B4F';cx.beginPath();cx.arc(o.x+10,GROUND-64,16,0,7);cx.arc(o.x+34,GROUND-84,14,0,7);cx.fill();}
+  }
+  // dog
+  drawDog(110,GROUND-6+G.dog.y,G.dog.duck>0,G.dog.bump,G.dog.frame);
+  // message
+  $('msg').textContent=G.msgT>0?G.msg:'';
+}
+// hero dog on home
+(function(){const h=$('hero'),c=h.getContext('2d');let f=0;(function a(){c.clearRect(0,0,300,130);drawTree(40,120,90,true,c);drawTree(260,120,110,false,c);drawDog(110,112,false,0,f,c);f+=.1;requestAnimationFrame(a);})();})();
+
+/* ---------- SOUND ---------- */
+let AC=null;function ac(){if(!AC){try{AC=new(window.AudioContext||window.webkitAudioContext)();}catch(e){}}if(AC&&AC.state==='suspended')AC.resume();return AC;}
+function tone(f,t0,d,type='sine',g0=.3){const c=ac();if(!c)return;const o=c.createOscillator(),g=c.createGain();o.type=type;o.connect(g);g.connect(c.destination);o.frequency.setValueAtTime(f,t0);g.gain.setValueAtTime(g0,t0);g.gain.exponentialRampToValueAtTime(.001,t0+d);o.start(t0);o.stop(t0+d+.01);}
+function snd(k){const c=ac();if(!c)return;const n=c.currentTime;
+  if(k==='click')tone(600,n,.06,'triangle',.18);if(k==='tick')tone(900,n,.07,'triangle',.15);
+  if(k==='pick'){tone(660,n,.09,'triangle',.25);tone(990,n+.08,.12,'triangle',.25);}
+  if(k==='bump'){tone(160,n,.2,'square',.25);tone(120,n+.1,.25,'square',.2);}
+  if(k==='fanfare')[[523,0],[659,.14],[784,.28],[1047,.42]].forEach(([f,d])=>tone(f,n+d,.28,'triangle',.3));
+  if(k==='funny')[[400,0],[500,.12]].forEach(([f,d])=>tone(f,n+d,.1,'square',.12));
+  if(k==='go'){const o=c.createOscillator(),g=c.createGain();o.type='sawtooth';o.connect(g);g.connect(c.destination);o.frequency.setValueAtTime(200,n);o.frequency.exponentialRampToValueAtTime(1000,n+.3);g.gain.setValueAtTime(.18,n);g.gain.exponentialRampToValueAtTime(.001,n+.35);o.start(n);o.stop(n+.37);}}
+
+/* ---------- CONFETTI ---------- */
+const cf=$('confetti'),cfx=cf.getContext('2d');let ps=[],run=false;
+function confetti(){cf.width=innerWidth;cf.height=innerHeight;ps=[];const col=['#EE6352','#FFC93C','#7FB77E','#BFE3F4','#164A78'];for(let i=0;i<110;i++)ps.push({x:Math.random()*cf.width,y:-20-Math.random()*100,w:4+Math.random()*12,h:3+Math.random()*8,c:pick(col),vx:Math.random()*5-2.5,vy:2+Math.random()*4,r:Math.random()*360,rv:Math.random()*12-6,o:1});if(!run){run=true;anim();}}
+function anim(){if(!run)return;cfx.clearRect(0,0,cf.width,cf.height);ps=ps.filter(p=>p.o>.01&&p.y<cf.height+20);if(!ps.length){run=false;return;}ps.forEach(p=>{p.x+=p.vx;p.y+=p.vy;p.r+=p.rv;if(p.y>cf.height*.6)p.o-=.018;cfx.save();cfx.translate(p.x,p.y);cfx.rotate(p.r*Math.PI/180);cfx.globalAlpha=Math.max(0,p.o);cfx.fillStyle=p.c;cfx.fillRect(-p.w/2,-p.h/2,p.w,p.h);cfx.restore();});requestAnimationFrame(anim);}
+
+/* keyboard for laptops */
+addEventListener('keydown',e=>{if(!G||!$('s-play').classList.contains('active'))return;if(e.key==='ArrowUp'||e.key===' ')jump();if(e.key==='ArrowDown')duck();if(e.key==='ArrowRight'||e.key==='Enter')walk();});
+if('serviceWorker'in navigator&&location.protocol==='https:')navigator.serviceWorker.register('sw-woods.js',{scope:'./lost-in-the-woods'}).catch(()=>{});
+</script>
+</body>
+</html>
