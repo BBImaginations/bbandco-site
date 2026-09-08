@@ -193,7 +193,7 @@ const QUESTIONS=[
  {q:'What is a quarter of 20?',a:['4','5','10'],c:1,h:'Share twenty into four groups.'}
 ]];
 /* Levels are data too: obstacles per run, speed, where questions land (fraction of route). */
-const LEVEL={obstacles:10,speed:3.2,questionsAt:[0,0.5],endQuestion:true};
+const LEVEL={obstacles:10,speed:[1.6,2.0,2.4],questionsAt:[0,0.5],endQuestion:true};
 
 /* ---------- STATE ---------- */
 const $=id=>document.getElementById(id);
@@ -205,7 +205,7 @@ function setAge(i,el){age=i;document.querySelectorAll('.age').forEach(a=>a.class
 /* ---------- GAME SETUP ---------- */
 const cv=$('game'),CX=cv.getContext('2d'),cx=CX;const W=cv.width,H=cv.height,GROUND=H-70;
 function startGame(){
-  G={x:0,speed:LEVEL.speed,walking:false,done:0,total:LEVEL.obstacles,obs:[],nextGap:260,bumps:0,asked:new Set(),qDue:[...LEVEL.questionsAt],inQ:false,
+  G={x:0,speed:LEVEL.speed[age],walking:false,done:0,total:LEVEL.obstacles,obs:[],nextGap:260,bumps:0,asked:new Set(),qDue:[...LEVEL.questionsAt],inQ:false,
      dog:{y:0,vy:0,duck:0,bump:0,frame:0},trees:Array.from({length:14},(_,i)=>({x:i*90+Math.random()*40,h:120+Math.random()*90,d:Math.random()<.5?.4:.7})),msg:'',msgT:0,finished:false};
   paintMap();$('warn').classList.remove('show');$('bubble').classList.remove('show');$('gobtn').style.display='flex';
   go('play');loop();
@@ -244,10 +244,10 @@ function update(){
   // spawn
   const spawned=G.obs.length+G.done;
   const lastX=G.obs.length?G.obs[G.obs.length-1].x:-9999;
-  if(spawned<G.total&&lastX<W-G.nextGap){G.obs.push({x:W+60,type:Math.random()<.5?'log':'branch',hit:false,passed:false});G.nextGap=220+Math.random()*120;}
+  if(spawned<G.total&&lastX<W-G.nextGap){G.obs.push({x:W+60,type:Math.random()<.5?'log':'branch',hit:false,passed:false});G.nextGap=300+Math.random()*140;}
   // move obstacles
-  $('warn').classList.toggle('show',G.obs.some(o=>o.x>200&&o.x<400&&!o.hit));
-  const wo=G.obs.find(o=>o.x>200&&o.x<400&&!o.hit);if(wo)$('warn').textContent=wo.type==='log'?'⬆️ Jump!':'⬇️ Duck!';
+  $('warn').classList.toggle('show',G.obs.some(o=>o.x>190&&o.x<470&&!o.hit));
+  const wo=G.obs.find(o=>o.x>190&&o.x<470&&!o.hit);if(wo)$('warn').textContent=wo.type==='log'?'⬆️ Jump!':'⬇️ Duck!';
   for(const o of G.obs){o.x-=G.speed;
     const dogX=110,dogR=dogX+44;
     if(!o.hit&&!o.passed&&o.x<dogR&&o.x+50>dogX){
@@ -269,22 +269,31 @@ function finishGame(){snd('fanfare');$('e-stat').textContent=G.bumps===0?'Not a 
 /* ---------- DRAW ---------- */
 function drawTree(x,base,h,dark,cx=CX){const c=dark?'#2E6B4F':'#7FB77E';cx.fillStyle='#8B5A2B';cx.fillRect(x-6,base-h*.35,12,h*.35);cx.fillStyle=c;for(let i=0;i<3;i++){const w=60-i*14,y=base-h*.3-i*h*.22;cx.beginPath();cx.moveTo(x-w/2,y);cx.lineTo(x,y-h*.32);cx.lineTo(x+w/2,y);cx.closePath();cx.fill();}}
 function drawDog(x,y,duck,bump,frame,cx=CX){
-  const sq=duck?0.6:1;cx.save();cx.translate(x,y);if(bump&&Math.floor(bump/3)%2)cx.globalAlpha=.5;
-  cx.scale(1,sq);
-  // legs
-  cx.strokeStyle='#8B5A2B';cx.lineWidth=7;cx.lineCap='round';const lg=Math.sin(frame*4)*8;
-  cx.beginPath();cx.moveTo(10,-4);cx.lineTo(8+lg,16);cx.moveTo(24,-4);cx.lineTo(26-lg,16);cx.moveTo(38,-4);cx.lineTo(40+lg,16);cx.moveTo(50,-4);cx.lineTo(52-lg,16);cx.stroke();
-  // body
-  cx.fillStyle='#fff';cx.strokeStyle='#1F4D3A';cx.lineWidth=3;cx.beginPath();cx.ellipse(30,-14,32,17,0,0,7);cx.fill();cx.stroke();
-  cx.fillStyle='#8B5A2B';cx.beginPath();cx.ellipse(18,-18,16,11,0,0,7);cx.fill();
-  // tail
-  cx.strokeStyle='#8B5A2B';cx.lineWidth=6;cx.beginPath();cx.moveTo(-2,-20);cx.quadraticCurveTo(-14,-34+Math.sin(frame*6)*4,-8,-42);cx.stroke();
-  // head
-  cx.fillStyle='#fff';cx.strokeStyle='#1F4D3A';cx.lineWidth=3;cx.beginPath();cx.ellipse(58,-30,18,16,0,0,7);cx.fill();cx.stroke();
-  cx.fillStyle='#8B5A2B';cx.beginPath();cx.ellipse(46,-38,10,14,.6,0,7);cx.fill();// ear
-  cx.fillStyle='#1F4D3A';cx.beginPath();cx.arc(74,-30,3.5,0,7);cx.fill();cx.beginPath();cx.arc(62,-34,2.5,0,7);cx.fill();
-  // bandana
-  cx.fillStyle='#4A90D9';cx.beginPath();cx.moveTo(42,-20);cx.lineTo(58,-14);cx.lineTo(52,-2);cx.closePath();cx.fill();
+  const sq=duck?0.62:1;cx.save();cx.translate(x,y);if(bump&&Math.floor(bump/3)%2)cx.globalAlpha=.5;cx.scale(1,sq);
+  const BR='#6B3A1E',CR='#F6E7C8',INK='#1F4D3A';cx.lineCap='round';cx.lineJoin='round';
+  const lg=Math.sin(frame*4)*9;
+  // legs: brown upper, cream lower (socks)
+  function leg(px,sw){cx.strokeStyle=BR;cx.lineWidth=8;cx.beginPath();cx.moveTo(px,-6);cx.lineTo(px+sw*.5,6);cx.stroke();cx.strokeStyle=CR;cx.lineWidth=8;cx.beginPath();cx.moveTo(px+sw*.5,6);cx.lineTo(px+sw,16);cx.stroke();cx.strokeStyle=INK;cx.lineWidth=1.5;cx.beginPath();cx.moveTo(px+sw*.5,6);cx.lineTo(px+sw,16);cx.stroke();}
+  leg(8,lg);leg(22,-lg);leg(40,lg);leg(52,-lg);
+  // tail (cream tip)
+  cx.strokeStyle=BR;cx.lineWidth=7;cx.beginPath();cx.moveTo(-2,-18);cx.quadraticCurveTo(-16,-30+Math.sin(frame*6)*5,-10,-42);cx.stroke();cx.strokeStyle=CR;cx.lineWidth=5;cx.beginPath();cx.moveTo(-9,-36);cx.lineTo(-10,-42);cx.stroke();
+  // body brown
+  cx.fillStyle=BR;cx.strokeStyle=INK;cx.lineWidth=3;cx.beginPath();cx.ellipse(30,-16,33,18,0,0,7);cx.fill();cx.stroke();
+  // cream chest / belly
+  cx.fillStyle=CR;cx.beginPath();cx.ellipse(34,-6,22,9,0,0,7);cx.fill();cx.beginPath();cx.ellipse(52,-14,10,12,0,0,7);cx.fill();
+  // head brown
+  cx.fillStyle=BR;cx.beginPath();cx.ellipse(60,-32,19,17,0,0,7);cx.fill();cx.stroke();
+  // muzzle cream + blaze
+  cx.fillStyle=CR;cx.beginPath();cx.ellipse(72,-28,10,8,0,0,7);cx.fill();cx.fillRect(62,-46,5,12);
+  // long floppy ear
+  cx.fillStyle=BR;cx.beginPath();cx.ellipse(46,-24,9,17,.25,0,7);cx.fill();cx.stroke();
+  // eye, nose, tongue
+  cx.fillStyle='#fff';cx.beginPath();cx.arc(66,-36,4.5,0,7);cx.fill();cx.fillStyle=INK;cx.beginPath();cx.arc(67,-36,2.5,0,7);cx.fill();
+  cx.fillStyle=INK;cx.beginPath();cx.arc(80,-30,3.5,0,7);cx.fill();
+  cx.fillStyle='#EE6352';cx.beginPath();cx.ellipse(74,-19,4,6,0,0,7);cx.fill();
+  // bandana: blue with paw
+  cx.fillStyle='#3FA7E6';cx.strokeStyle=INK;cx.lineWidth=2;cx.beginPath();cx.moveTo(42,-20);cx.lineTo(62,-14);cx.lineTo(54,0);cx.closePath();cx.fill();cx.stroke();
+  cx.fillStyle='#164A78';cx.beginPath();cx.arc(53,-12,2.6,0,7);cx.arc(50,-16,1.4,0,7);cx.arc(54,-17,1.4,0,7);cx.arc(57,-14,1.4,0,7);cx.fill();
   cx.restore();
 }
 function draw(){

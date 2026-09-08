@@ -1,4 +1,4 @@
-const CACHE='woods-v1';
+const CACHE='woods-v2';
 const CORE=['./lost-in-the-woods.html','./lost-in-the-woods.webmanifest','./icons/woods-192.png','./icons/woods-512.png','./icons/woods-180.png','../assets/logo-wide.png','../assets/covers/lost-in-the-woods.jpg'];
 self.addEventListener('install',e=>{e.waitUntil(caches.open(CACHE).then(c=>c.addAll(CORE)).then(()=>self.skipWaiting()));});
 self.addEventListener('activate',e=>{e.waitUntil(caches.keys().then(ks=>Promise.all(ks.filter(k=>k!==CACHE).map(k=>caches.delete(k)))).then(()=>self.clients.claim()));});
