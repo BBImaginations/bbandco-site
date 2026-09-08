@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://bbandcoimaginations.co.uk/sitemap.xml

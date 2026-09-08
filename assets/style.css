@@ -164,3 +164,11 @@ footer .wrap{align-items:center}
 .slab-title{font-size:clamp(2rem,4.5vw,2.8rem);margin:8px 0 12px}
 .slab-facts{list-style:none;display:flex;flex-wrap:wrap;gap:8px 12px;padding:0;margin:0 0 20px}
 .slab-facts li{font-family:var(--display);font-weight:500;font-size:.95rem;padding:6px 12px;border:2px solid var(--ink);border-radius:999px;background:var(--paper)}
+/* game landing pages */
+.game-hero{display:grid;grid-template-columns:220px 1fr;gap:32px;align-items:center}
+.game-hero-art{border:3px solid var(--ink);border-radius:18px;aspect-ratio:1;font-size:96px;box-shadow:6px 6px 0 var(--ink)}
+@media (max-width:700px){.game-hero{grid-template-columns:1fr}.game-hero-art{max-width:200px}}
+.howto{margin:0 0 0 22px;padding:0;display:grid;gap:10px;font-size:1.05rem;max-width:62ch}
+.howto li::marker{font-family:var(--display);font-weight:700;color:var(--coral)}
+.bookcard-wide{display:flex;gap:20px;align-items:center;text-decoration:none;color:var(--ink);border:3px solid var(--ink);border-radius:18px;background:var(--paper);padding:16px 20px;box-shadow:6px 6px 0 var(--ink)}
+.bookcard-wide img{width:110px;height:110px;object-fit:cover;border:3px solid var(--ink);border-radius:12px;flex:none}
