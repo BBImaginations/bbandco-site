@@ -67,11 +67,11 @@ canvas#game{display:block;width:100%;height:auto}
 .ans.no{background:var(--coral);color:#fff;animation:wob .4s}.ans.yes{background:var(--leaf)}
 @keyframes wob{25%{transform:rotate(-4deg)}75%{transform:rotate(4deg)}}
 .bubble .hint{font-size:.9rem;color:var(--ink-soft);text-align:center;font-weight:700;min-height:1.2em}
-.controls{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-.ctl{padding:22px 10px;border:3px solid var(--ink);border-radius:20px;background:var(--white);font-family:var(--display);font-weight:700;font-size:1.4rem;display:flex;flex-direction:column;align-items:center;gap:2px;box-shadow:4px 4px 0 var(--ink);transition:transform .08s}
+.controls{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
+.ctl{padding:18px 6px;border:3px solid var(--ink);border-radius:20px;background:var(--white);font-family:var(--display);font-weight:700;font-size:1.15rem;display:flex;flex-direction:column;align-items:center;gap:2px;box-shadow:4px 4px 0 var(--ink);transition:transform .08s}
 .ctl:active{transform:translate(2px,2px);box-shadow:2px 2px 0 var(--ink)}
 .ctl small{font-family:var(--body);font-size:.75rem;color:var(--ink-soft);font-weight:800;letter-spacing:.08em}
-.ctl.jump{background:var(--sun)}.ctl.duck{background:var(--sky)}
+.ctl.jump{background:var(--sun)}.ctl.duck{background:var(--sky)}.ctl.bark{background:var(--coral);color:#fff}.ctl.bark small{color:#fff}
 .ctl.go{grid-column:1/-1;background:var(--coral);color:#fff}.ctl.go small{color:#fff}
 /* END */
 .end{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:14px;padding:24px;background:var(--sun)}
@@ -94,7 +94,7 @@ canvas#game{display:block;width:100%;height:auto}
     <div class="gbrand" style="padding:0"><a href="../games.html"><img src="../assets/logo-wide.png" alt="BB & Co Imaginations"></a></div>
     <canvas id="hero" width="300" height="130" style="max-width:300px;width:100%"></canvas>
     <h1>Lost in the <span>Woods</span></h1>
-    <p style="font-weight:600;max-width:32ch">BB has lost the path. Answer a question to unlock the map, then jump and duck to get home.</p>
+    <p style="font-weight:600;max-width:32ch">BB has lost the path and there are wolves about. Answer a question to unlock the map, then jump, duck and bark all the way home.</p>
     <div class="ages" id="ages">
       <button class="age" onclick="setAge(0,this)">4–5<small>little explorer</small></button>
       <button class="age" onclick="setAge(1,this)">6–7<small>path finder</small></button>
@@ -127,6 +127,7 @@ canvas#game{display:block;width:100%;height:auto}
       <button class="ctl go" id="gobtn" onclick="walk()">▶ Walk<small>TAP TO GO</small></button>
       <button class="ctl jump" onclick="jump()">⬆️ Jump<small>OVER LOGS</small></button>
       <button class="ctl duck" onclick="duck()">⬇️ Duck<small>UNDER BRANCHES</small></button>
+      <button class="ctl bark" onclick="bark()">🐕 Bark<small>AT WOLVES</small></button>
     </div>
   </div>
 </section>
@@ -136,7 +137,7 @@ canvas#game{display:block;width:100%;height:auto}
   <div class="end">
     <div class="gbrand" style="padding:0"><a href="../games.html"><img src="../assets/logo-wide.png" alt="BB & Co Imaginations"></a></div>
     <div class="medal">🏡</div>
-    <h1>BB is home!</h1>
+    <h1>BB saved the day!</h1>
     <p class="stat" id="e-stat"></p>
     <a class="bookcard" href="https://www.amazon.co.uk/dp/B0G2JV918W" target="_blank" rel="noopener">
       <img src="../assets/covers/lost-in-the-woods.jpg" alt="">
@@ -193,7 +194,7 @@ const QUESTIONS=[
  {q:'What is a quarter of 20?',a:['4','5','10'],c:1,h:'Share twenty into four groups.'}
 ]];
 /* Levels are data too: obstacles per run, speed, where questions land (fraction of route). */
-const LEVEL={obstacles:10,speed:[1.7,2.0,2.3],questionsAt:[0,0.5],endQuestion:true};
+const LEVEL={obstacles:10,wolves:[2,3,4],pack:3,speed:[1.7,2.0,2.3],questionsAt:[0,0.5],endQuestion:true};
 
 /* ---------- STATE ---------- */
 const $=id=>document.getElementById(id);
@@ -203,10 +204,15 @@ function go(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remo
 function setAge(i,el){age=i;document.querySelectorAll('.age').forEach(a=>a.classList.remove('on'));el.classList.add('on');$('startbtn').disabled=false;snd('pick');}
 
 /* ---------- GAME SETUP ---------- */
+function makePlan(){const n=LEVEL.obstacles,w=LEVEL.wolves[age];const t=[];for(let i=0;i<n;i++)t.push(Math.random()<.5?'log':'branch');
+  const idx=[...Array(n).keys()].sort(()=>Math.random()-.5).slice(0,w);idx.forEach(i=>t[i]='wolf');if(t[0]==='wolf')[t[0],t[1]]=[t[1],t[0]];return t;}
+function bark(){if(G.inQ||!G.walking||G.barkCd>0)return;G.barkCd=18;snd('bark');G.dog.barkT=14;
+  const w=G.obs.find(o=>o.type==='wolf'&&!o.hit&&!o.passed&&o.x<300&&o.x>140);
+  if(w){w.passed=true;w.flee=true;G.done++;if(G.packPhase)G.pack++;G.wolves++;paintMap();snd('yelp');setMsg(pick(['Woof! Off you go!','Chased it off!','Wolf gone!']));}}
 const cv=$('game'),CX=cv.getContext('2d'),cx=CX;const W=cv.width,H=cv.height,GROUND=H-70;
 function startGame(){
-  G={x:0,speed:LEVEL.speed[age],walking:false,done:0,total:LEVEL.obstacles,obs:[],nextGap:260,bumps:0,asked:new Set(),qDue:[...LEVEL.questionsAt],inQ:false,
-     dog:{y:0,vy:0,duck:0,bump:0,frame:0},trees:Array.from({length:14},(_,i)=>({x:i*90+Math.random()*40,h:120+Math.random()*90,d:Math.random()<.5?.4:.7})),msg:'',msgT:0,finished:false};
+  G={x:0,speed:LEVEL.speed[age],walking:false,done:0,total:LEVEL.obstacles,plan:makePlan(),obs:[],nextGap:260,bumps:0,wolves:0,pack:0,packPhase:false,barkCd:0,asked:new Set(),qDue:[...LEVEL.questionsAt],inQ:false,
+     dog:{y:0,vy:0,duck:0,bump:0,frame:0,barkT:0},trees:Array.from({length:14},(_,i)=>({x:i*90+Math.random()*40,h:120+Math.random()*90,d:Math.random()<.5?.4:.7})),msg:'',msgT:0,finished:false};
   paintMap();$('warn').classList.remove('show');$('bubble').classList.remove('show');$('gobtn').style.display='flex';
   go('play');loop();
   setTimeout(()=>askQuestion('Answer to unlock the map!'),400);
@@ -244,27 +250,32 @@ function update(){
   // spawn
   const spawned=G.obs.length+G.done;
   const lastX=G.obs.length?G.obs[G.obs.length-1].x:-9999;
-  if(spawned<G.total&&lastX<W-G.nextGap){G.obs.push({x:W+60,type:Math.random()<.5?'log':'branch',hit:false,passed:false});G.nextGap=300+Math.random()*140;}
+  if(spawned<G.total&&lastX<W-G.nextGap){G.obs.push({x:W+60,type:G.plan[spawned],hit:false,passed:false});G.nextGap=300+Math.random()*140;}
+  if(G.packPhase){const ps=G.obs.filter(o=>o.type==='wolf').length+G.pack;if(ps<LEVEL.pack&&lastX<W-170)G.obs.push({x:W+60,type:'wolf',hit:false,passed:false});}
   // move obstacles
   $('warn').classList.toggle('show',G.obs.some(o=>o.x>190&&o.x<470&&!o.hit));
-  const wo=G.obs.find(o=>o.x>190&&o.x<470&&!o.hit);if(wo)$('warn').textContent=wo.type==='log'?'⬆️ Jump!':'⬇️ Duck!';
-  for(const o of G.obs){o.x-=G.speed;
+  const wo=G.obs.find(o=>o.x>190&&o.x<470&&!o.hit);if(wo)$('warn').textContent=wo.type==='log'?'⬆️ Jump!':wo.type==='branch'?'⬇️ Duck!':'🐕 Bark!';
+  if(G.barkCd>0)G.barkCd--;
+  for(const o of G.obs){
+    if(o.flee){o.x+=6;continue;}
+    o.x-=o.type==='wolf'?G.speed*1.35:G.speed;
     const dogX=110,dogR=dogX+44;
     if(!o.hit&&!o.passed&&o.x<dogR&&o.x+50>dogX){
-      const safe=o.type==='log'?d.y<-22:d.duck>0;
-      if(!safe){o.hit=true;d.bump=30;G.bumps++;G.walking=false;snd('bump');setMsg(pick(['Oops! Try again','Bump! Watch the warning','Ouch! Nearly']));
-        setTimeout(()=>{G.obs=G.obs.filter(x=>x!==o);G.done++;paintMap();$('gobtn').style.display='flex';},700);}
+      const safe=o.type==='log'?d.y<-22:o.type==='branch'?d.duck>0:false;
+      if(!safe){o.hit=true;d.bump=30;G.bumps++;G.walking=false;snd(o.type==='wolf'?'growl':'bump');setMsg(o.type==='wolf'?pick(['Grrr! Bark sooner!','Too close! Bark when it glows']):pick(['Oops! Try again','Bump! Watch the warning','Ouch! Nearly']));
+        setTimeout(()=>{G.obs=G.obs.filter(x=>x!==o);G.done++;if(G.packPhase)G.pack++;paintMap();$('gobtn').style.display='flex';},700);}
       else{o.passed=true;G.done++;paintMap();snd('tick');}
     }}
-  G.obs=G.obs.filter(o=>o.x>-80);
+  G.obs=G.obs.filter(o=>o.x>-80&&o.x<W+200);
   // mid-route questions
   const frac=G.done/G.total;
   if(G.qDue.length&&frac>=G.qDue[0]&&G.qDue[0]>0){G.qDue.shift();setTimeout(()=>askQuestion('One more to open the path!'),200);}
   if(G.qDue.length&&G.qDue[0]===0)G.qDue.shift();
   // finish
-  if(G.done>=G.total&&!G.obs.some(o=>!o.passed&&!o.hit)&&!G.finished){G.finished=true;G.walking=false;if(LEVEL.endQuestion)setTimeout(()=>askQuestion('Last one: which way is home?'),400);else finishGame();}
+  if(G.done>=G.total&&!G.packPhase&&!G.obs.some(o=>!o.passed&&!o.hit)){G.packPhase=true;G.total+=LEVEL.pack;paintMap();setMsg('The wolf pack! Bark them off! 🐺🐺🐺');snd('growl');}
+  if(G.packPhase&&G.pack>=LEVEL.pack&&!G.obs.some(o=>!o.passed&&!o.hit)&&!G.finished){G.finished=true;G.walking=false;setMsg('BB saved the day! 🐾');if(LEVEL.endQuestion)setTimeout(()=>askQuestion('Last one: which way is home?'),900);else finishGame();}
 }
-function finishGame(){snd('fanfare');$('e-stat').textContent=G.bumps===0?'Not a single bump. Perfect path finding! 🌟':`Home safe with ${G.bumps} little bump${G.bumps>1?'s':''}. Well done! 🐾`;go('end');setTimeout(confetti,200);}
+function finishGame(){snd('fanfare');$('e-stat').textContent=`BB chased off ${G.wolves} wol${G.wolves===1?'f':'ves'} 🐺 and found the way home`+(G.bumps===0?' without a single bump! 🌟':` with ${G.bumps} little bump${G.bumps>1?'s':''}. 🐾`);go('end');setTimeout(confetti,200);}
 
 /* ---------- DRAW ---------- */
 function drawTree(x,base,h,dark,cx=CX){const c=dark?'#2E6B4F':'#7FB77E';cx.fillStyle='#8B5A2B';cx.fillRect(x-6,base-h*.35,12,h*.35);cx.fillStyle=c;for(let i=0;i<3;i++){const w=60-i*14,y=base-h*.3-i*h*.22;cx.beginPath();cx.moveTo(x-w/2,y);cx.lineTo(x,y-h*.32);cx.lineTo(x+w/2,y);cx.closePath();cx.fill();}}
@@ -296,6 +307,19 @@ function drawDog(x,y,duck,bump,frame,cx=CX){
   cx.fillStyle='#164A78';cx.beginPath();cx.arc(53,-12,2.6,0,7);cx.arc(50,-16,1.4,0,7);cx.arc(54,-17,1.4,0,7);cx.arc(57,-14,1.4,0,7);cx.fill();
   cx.restore();
 }
+function drawWolf(x,y,frame,flee,cx=CX){
+  cx.save();cx.translate(x,y);if(flee){cx.translate(60,0);cx.scale(-1,1);}
+  const GR='#7C8A99',DK='#4E5A66',INK='#1F4D3A';cx.lineCap='round';const lg=Math.sin(frame*5)*7;
+  cx.strokeStyle=DK;cx.lineWidth=7;cx.beginPath();cx.moveTo(14,-6);cx.lineTo(12+lg,14);cx.moveTo(26,-6);cx.lineTo(28-lg,14);cx.moveTo(42,-6);cx.lineTo(44+lg,14);cx.moveTo(52,-6);cx.lineTo(54-lg,14);cx.stroke();
+  cx.strokeStyle=GR;cx.lineWidth=6;cx.beginPath();cx.moveTo(60,-18);cx.quadraticCurveTo(76,-24,80,-10);cx.stroke();
+  cx.fillStyle=GR;cx.strokeStyle=INK;cx.lineWidth=3;cx.beginPath();cx.ellipse(32,-16,30,15,0,0,7);cx.fill();cx.stroke();
+  cx.fillStyle=GR;cx.beginPath();cx.ellipse(6,-28,16,13,0,0,7);cx.fill();cx.stroke();
+  cx.fillStyle=GR;cx.beginPath();cx.moveTo(-10,-26);cx.lineTo(-24,-24);cx.lineTo(-10,-18);cx.closePath();cx.fill();cx.stroke();// snout
+  cx.fillStyle=GR;cx.beginPath();cx.moveTo(0,-38);cx.lineTo(4,-52);cx.lineTo(12,-38);cx.closePath();cx.moveTo(10,-40);cx.lineTo(16,-52);cx.lineTo(20,-38);cx.closePath();cx.fill();cx.stroke();// ears
+  cx.fillStyle='#fff';cx.beginPath();cx.arc(2,-31,4,0,7);cx.fill();cx.fillStyle=flee?'#1F4D3A':'#EE6352';cx.beginPath();cx.arc(1,-31,2.2,0,7);cx.fill();
+  cx.fillStyle=INK;cx.beginPath();cx.arc(-24,-24,2.5,0,7);cx.fill();
+  if(flee){cx.fillStyle='#fff';cx.font='bold 14px Fredoka,sans-serif';cx.textAlign='center';cx.fillText('yip!',10,-58);}
+  cx.restore();}
 function draw(){
   cx.clearRect(0,0,W,H);
   // sky + sun
@@ -313,6 +337,11 @@ function draw(){
       cx.fillStyle='#E4722F';cx.strokeStyle='#1F4D3A';cx.lineWidth=4;cx.beginPath();cx.roundRect(o.x,GROUND-28,52,28,9);cx.fill();cx.stroke();
       cx.fillStyle='#FFC93C';cx.beginPath();cx.arc(o.x+52,GROUND-14,9,0,7);cx.fill();cx.stroke();
       cx.fillStyle='#1F4D3A';cx.font='bold 22px Fredoka,sans-serif';cx.textAlign='center';cx.fillText('⬆',o.x+26,GROUND-38);
+    }else if(o.type==='wolf'){
+      const inRange=o.x<300&&o.x>140&&!o.passed;
+      if(inRange){cx.fillStyle='rgba(255,201,60,.6)';cx.beginPath();cx.ellipse(o.x+30,GROUND-22,52,34,0,0,7);cx.fill();}
+      drawWolf(o.x,GROUND-6,G.dog.frame,o.flee);
+      if(!o.passed){cx.fillStyle='#1F4D3A';cx.font='bold 22px Fredoka,sans-serif';cx.textAlign='center';cx.fillText('🐕',o.x+30,GROUND-62);}
     }else{
       if(near){cx.fillStyle='rgba(255,201,60,.55)';cx.beginPath();cx.ellipse(o.x+22,GROUND-76,46,34,0,0,7);cx.fill();}
       cx.strokeStyle='#E4722F';cx.lineWidth=12;cx.lineCap='round';cx.beginPath();cx.moveTo(o.x+62,0);cx.lineTo(o.x+10,GROUND-62);cx.stroke();
@@ -323,6 +352,7 @@ function draw(){
   }
   // dog
   drawDog(110,GROUND-6+G.dog.y,G.dog.duck>0,G.dog.bump,G.dog.frame);
+  if(G.dog.barkT>0){G.dog.barkT--;cx.fillStyle='#fff';cx.strokeStyle='#1F4D3A';cx.lineWidth=3;cx.beginPath();cx.roundRect(196,GROUND-92,72,30,10);cx.fill();cx.stroke();cx.fillStyle='#1F4D3A';cx.font='bold 20px Fredoka,sans-serif';cx.textAlign='center';cx.fillText('WOOF!',232,GROUND-70);}
   // message
   $('msg').textContent=G.msgT>0?G.msg:'';
 }
@@ -336,6 +366,9 @@ function snd(k){const c=ac();if(!c)return;const n=c.currentTime;
   if(k==='click')tone(600,n,.06,'triangle',.18);if(k==='tick')tone(900,n,.07,'triangle',.15);
   if(k==='pick'){tone(660,n,.09,'triangle',.25);tone(990,n+.08,.12,'triangle',.25);}
   if(k==='bump'){tone(160,n,.2,'square',.25);tone(120,n+.1,.25,'square',.2);}
+  if(k==='bark'){[0,.09].forEach(d=>{const o=c.createOscillator(),g=c.createGain();o.type='square';o.connect(g);g.connect(c.destination);o.frequency.setValueAtTime(420,n+d);o.frequency.exponentialRampToValueAtTime(180,n+d+.08);g.gain.setValueAtTime(.3,n+d);g.gain.exponentialRampToValueAtTime(.001,n+d+.09);o.start(n+d);o.stop(n+d+.1);});}
+  if(k==='yelp'){const o=c.createOscillator(),g=c.createGain();o.type='triangle';o.connect(g);g.connect(c.destination);o.frequency.setValueAtTime(900,n);o.frequency.exponentialRampToValueAtTime(1500,n+.12);o.frequency.exponentialRampToValueAtTime(500,n+.3);g.gain.setValueAtTime(.25,n);g.gain.exponentialRampToValueAtTime(.001,n+.32);o.start(n);o.stop(n+.34);}
+  if(k==='growl'){const o=c.createOscillator(),g=c.createGain();o.type='sawtooth';o.connect(g);g.connect(c.destination);o.frequency.setValueAtTime(90,n);o.frequency.linearRampToValueAtTime(70,n+.4);g.gain.setValueAtTime(.2,n);g.gain.exponentialRampToValueAtTime(.001,n+.45);o.start(n);o.stop(n+.47);}
   if(k==='fanfare')[[523,0],[659,.14],[784,.28],[1047,.42]].forEach(([f,d])=>tone(f,n+d,.28,'triangle',.3));
   if(k==='funny')[[400,0],[500,.12]].forEach(([f,d])=>tone(f,n+d,.1,'square',.12));
   if(k==='go'){const o=c.createOscillator(),g=c.createGain();o.type='sawtooth';o.connect(g);g.connect(c.destination);o.frequency.setValueAtTime(200,n);o.frequency.exponentialRampToValueAtTime(1000,n+.3);g.gain.setValueAtTime(.18,n);g.gain.exponentialRampToValueAtTime(.001,n+.35);o.start(n);o.stop(n+.37);}}
@@ -346,7 +379,7 @@ function confetti(){cf.width=innerWidth;cf.height=innerHeight;ps=[];const col=['
 function anim(){if(!run)return;cfx.clearRect(0,0,cf.width,cf.height);ps=ps.filter(p=>p.o>.01&&p.y<cf.height+20);if(!ps.length){run=false;return;}ps.forEach(p=>{p.x+=p.vx;p.y+=p.vy;p.r+=p.rv;if(p.y>cf.height*.6)p.o-=.018;cfx.save();cfx.translate(p.x,p.y);cfx.rotate(p.r*Math.PI/180);cfx.globalAlpha=Math.max(0,p.o);cfx.fillStyle=p.c;cfx.fillRect(-p.w/2,-p.h/2,p.w,p.h);cfx.restore();});requestAnimationFrame(anim);}
 
 /* keyboard for laptops */
-addEventListener('keydown',e=>{if(!G||!$('s-play').classList.contains('active'))return;if(e.key==='ArrowUp'||e.key===' ')jump();if(e.key==='ArrowDown')duck();if(e.key==='ArrowRight'||e.key==='Enter')walk();});
+addEventListener('keydown',e=>{if(!G||!$('s-play').classList.contains('active'))return;if(e.key==='ArrowUp'||e.key===' ')jump();if(e.key==='ArrowDown')duck();if(e.key==='b'||e.key==='B'||e.key==='ArrowLeft')bark();if(e.key==='ArrowRight'||e.key==='Enter')walk();});
 if('serviceWorker'in navigator&&location.protocol==='https:')navigator.serviceWorker.register('sw-woods.js',{scope:'./lost-in-the-woods'}).catch(()=>{});
 </script>
 </body>
