@@ -130,7 +130,7 @@ textarea.challenge:focus{box-shadow:0 0 0 4px var(--sun)}
 .who button.hit{background:var(--sun);border-color:var(--sun)}
 .rev .stack{width:100%;max-width:340px}
 .rev .btn{border-color:var(--white)}
-.rev .btn.light{background:var(--white);color:var(--ink)}
+.rev .btn{font-size:1.02rem}.rev .btn.light{background:var(--white);color:var(--ink)}
 .rev .btn.clear-b{background:transparent;color:var(--white)}
 /* SCORES */
 .scores{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;padding:8px 0}
@@ -256,6 +256,7 @@ textarea.challenge:focus{box-shadow:0 0 0 4px var(--sun)}
       <div class="who" id="who"><div class="k">Who got this one?</div><div class="row" id="who-row"></div></div>
       <div class="stack">
         <button class="btn light" onclick="playAgain()">⚡ Play again</button>
+        <button class="btn" style="background:var(--sun);color:var(--ink);border-color:var(--sun)" onclick="shareGame()">📤 Send to a parent who says "last one up is the loser"</button>
         <button class="btn clear-b" onclick="gotoSetup('edit')">✏️ Edit challenge</button>
         <button class="btn clear-b" onclick="gotoSetup('new')">🎯 New round</button>
         <button class="btn-ghost" style="color:#fff;opacity:.7" onclick="go('home')">Home</button>
@@ -388,6 +389,11 @@ function show(i){if(i>=stages.length){finish();return;}idx=i;const s=stages[i],e
 function advance(){if(done)return;clearTimeout(tmr);idx++;idx>=stages.length?finish():show(idx);}
 function finish(){if(done)return;done=true;clearTimeout(tmr);const r=S.round;$('stage').style.display='none';$('dots').innerHTML='';$('hint').style.display='none';
   $('f-phrase').textContent=r.phrase;$('f-tag').textContent=NAMES[r.mode];$('f-seal').textContent='🛡️ seal '+seal(r)+' · matched';$('f-emoji').textContent=r.data.emoji;renderWho();$('final').classList.add('show');snd(r.data.sound);setTimeout(confetti,150);}
+
+/* ---------- SHARE ---------- */
+async function shareGame(){const url='https://bbandcoimaginations.co.uk/who-wins.html';const text='Who Wins? settles "last one up the stairs is the loser" fairly: the rule is locked before anyone moves. Free, no download.';
+  if(navigator.share){try{await navigator.share({title:'Who Wins? – BB & Co Imaginations',text,url});snd('pick');return;}catch(e){if(e.name==='AbortError')return;}}
+  try{await navigator.clipboard.writeText(text+' '+url);toast('Link copied. Paste it into WhatsApp 📋');}catch(e){toast(url);}}
 
 /* ---------- SCORES ---------- */
 function initScores(){S.scores=Array.from({length:S.players},(_,i)=>({a:AV[i],n:0}));}

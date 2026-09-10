@@ -71,7 +71,8 @@ section.tint{background:var(--white);border-top:3px solid var(--ink);border-bott
 .book h3{margin:6px 0 2px}
 .book .meta{font-size:.9rem;color:var(--ink-soft);margin:0 0 6px}
 .book p{font-size:1rem;margin-bottom:10px}
-.book .btn{align-self:flex-start;margin-top:auto}
+.book .btn{align-self:flex-start}
+.book .actions .btn{margin-top:0}
 
 /* feature (home) */
 .feature{display:grid;grid-template-columns:minmax(220px,340px) 1fr;gap:40px;align-items:center}
