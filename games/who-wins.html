@@ -186,7 +186,7 @@ textarea.challenge:focus{box-shadow:0 0 0 4px var(--sun)}
     <div class="chips" id="ideas" style="margin-top:8px"></div>
     <div class="label">Mode</div>
     <div class="modes">
-      <button class="mode" id="mode-funny" onclick="setMode('funny')"><span class="e">🎪</span><span class="n">Funny</span><span class="d">Silly names, no losers</span></button>
+      <button class="mode" id="mode-funny" onclick="setMode('funny')"><span class="e">🎪</span><span class="n">Funny</span><span class="d">Silly names, all smiles</span></button>
       <button class="mode" id="mode-winning" onclick="setMode('winning')"><span class="e">🏆</span><span class="n">Winners</span><span class="d">Only good news</span></button>
       <button class="mode" id="mode-dare" onclick="setMode('dare')"><span class="e">🐔</span><span class="n">Dare</span><span class="d">A tiny silly task</span></button>
       <button class="mode" id="mode-chaos" onclick="setMode('chaos')"><span class="e">🌀</span><span class="n">Chaos</span><span class="d">Anything can happen</span></button>
@@ -198,7 +198,7 @@ textarea.challenge:focus{box-shadow:0 0 0 4px var(--sun)}
     <div class="faces" id="faces"></div>
     <div class="label">Twist</div>
     <div class="toggle" onclick="toggleGrownup()">
-      <div><div class="t">Grown-ups play too</div><div class="s">Sometimes Mum or Dad gets the consequence, whatever happened</div></div>
+      <div><div class="t">Grown-ups play too</div><div class="s">Sometimes Mum or Dad wins, or gets the consequence, whatever happened</div></div>
       <div class="switch" id="grownup-switch"></div>
     </div>
     <p class="safe" style="margin-top:14px">Play safe: walk on stairs, keep drinks small, and give the dares room. The rule is random, so there is never a reason to rush.</p>
@@ -256,7 +256,7 @@ textarea.challenge:focus{box-shadow:0 0 0 4px var(--sun)}
       <div class="who" id="who"><div class="k">Who got this one?</div><div class="row" id="who-row"></div></div>
       <div class="stack">
         <button class="btn light" onclick="playAgain()">⚡ Play again</button>
-        <button class="btn" style="background:var(--sun);color:var(--ink);border-color:var(--sun)" onclick="shareGame()">📤 Send to a parent who says "last one up is the loser"</button>
+        <button class="btn" style="background:var(--sun);color:var(--ink);border-color:var(--sun)" onclick="shareGame()">📤 Send to another family 📤</button>
         <button class="btn clear-b" onclick="gotoSetup('edit')">✏️ Edit challenge</button>
         <button class="btn clear-b" onclick="gotoSetup('new')">🎯 New round</button>
         <button class="btn-ghost" style="color:#fff;opacity:.7" onclick="go('home')">Home</button>
@@ -286,7 +286,7 @@ first:["must do a chicken dance! 🐔","must roar like a lion three times! 🦁"
 last:["must hop like a frog to the door! 🐸","must flap like a penguin! 🐧","must do a slow-motion victory walk! 🚶","must moo like a cow three times! 🐄","must pretend to ride a horse! 🐴","must do a funky freestyle dance! 💃","must squeak like a mouse! 🐭","must blow a raspberry! 😝","must spin while clapping! 🌀","must crawl to the nearest chair! 🐾","must do their silliest laugh out loud! 😂","must bounce ten times on the spot! 🦘","must oink like a pig three times! 🐷","must pretend to lift something very heavy! 🏋️","must do a dramatic slow-motion flop onto the sofa! 🎭","must do their best owl! 🦉","must shake their bottom for five seconds! 🎵","must gallop around the room once! 🐎"],
 middle:["must do a mystery dare chosen by everyone else! 🎲","must invent a brand new dance move! 🕺","must make up a silly song about the challenge! 🎵","must say their own name in three funny voices! 😄"]}};
 const CHAOS=["Everyone except the fastest player wins! 🎉","Everyone except the slowest player wins! 🎉","The youngest player wins this round! 🌟","The oldest player wins this round! 🏆","Nobody loses. Everybody cheer! 📣","All the kids win this round! 🎉","The tallest player wins! 📏","The shortest player wins! 📏","Whoever laughed during the round wins! 😂","Whoever is wearing the most colours wins! 🌈","Whoever made a sound during the challenge wins! 📢","Everyone wins. Group hug! 🤗","Whoever was funniest during the round wins! 😂","Whoever finished second wins this time! 🥈","The slowest player is the secret winner! 🐢","It's a draw. Everyone high five! 🙌","Reverse order: the last shall be first! 🔄","The silliest-looking player wins! 🤪","The quietest player wins! 🤫","The biggest smile wins! 😁","Everyone wins. Take a bow! 🎭","The brightest top wins! 👕","Nobody knows who won. Everyone gets a point! 🎲","The loudest player wins! 📢","The player in the middle wins! 🌀","The youngest player chooses the next challenge! 🎯","Whoever blinked the most wins! 👀","Everyone does a lap of honour. You ALL win! 🏆"];
-const GROWNUP=["Mum is the loser this round! 😂","Dad is the loser this round! 😂","The grown-up loses, whatever happened! 🎉","The grown-up must do a chicken dance! 🐔","The grown-up must roar like a lion! 🦁","Kids rule: every grown-up loses! 👑","The grown-up must do a dare the kids choose! 🎯","The grown-up must hop to the kitchen and back! 🐸","The grown-up is the silly sausage! 🌭","The grown-up must sing the next challenge! 🎵","The grown-up must do a slow-motion victory walk for the kids! 🚶","The grown-up must be a statue for ten seconds while the kids pose them! 🗿"];
+const GROWNUP=["Mum wins this round, whatever happened! 🏆","Dad wins this round, whatever happened! 🏆","The grown-up is the champion today! 👑","The grown-up gets the champion clap! 👏","The grown-up chooses the next challenge! 🎯","Mum is the silly sausage this round! 😂","Dad is the silly sausage this round! 😂","The grown-up loses, whatever happened! 🎉","The grown-up must do a chicken dance! 🐔","The grown-up must roar like a lion! 🦁","Kids rule: every grown-up loses! 👑","The grown-up must do a dare the kids choose! 🎯","The grown-up must hop to the kitchen and back! 🐸","The grown-up is the silly sausage! 🌭","The grown-up must sing the next challenge! 🎵","The grown-up must do a slow-motion victory walk for the kids! 🚶","The grown-up must be a statue for ten seconds while the kids pose them! 🗿"];
 const EMO={funny:['🌭','🥒','🍌','😂','🎪','🍩','🌀','🧙'],winning:['🏆','⭐','👑','🥇','⚡','🎉','💪','🌟'],dare:['🐔','🦁','🌀','🐸','🐧','🤖','🦘','🐘'],chaos:['🎉','🌀','🔄','🤗','😂','🎲','📣','🌈']};
 const NAMES={funny:'Funny mode',winning:'Winners mode',dare:'Dare mode',chaos:'Chaos mode'};
 const IDEAS={
@@ -391,7 +391,7 @@ function finish(){if(done)return;done=true;clearTimeout(tmr);const r=S.round;$('
   $('f-phrase').textContent=r.phrase;$('f-tag').textContent=NAMES[r.mode];$('f-seal').textContent='🛡️ seal '+seal(r)+' · matched';$('f-emoji').textContent=r.data.emoji;renderWho();$('final').classList.add('show');snd(r.data.sound);setTimeout(confetti,150);}
 
 /* ---------- SHARE ---------- */
-async function shareGame(){const url='https://bbandcoimaginations.co.uk/who-wins.html';const text='Who Wins? settles "last one up the stairs is the loser" fairly: the rule is locked before anyone moves. Free, no download.';
+async function shareGame(){const url='https://bbandcoimaginations.co.uk/who-wins.html';const text='Who Wins? is a fair family race game: the rule is locked before anyone moves, so nobody can twist it. Free, no download.';
   if(navigator.share){try{await navigator.share({title:'Who Wins? – BB & Co Imaginations',text,url});snd('pick');return;}catch(e){if(e.name==='AbortError')return;}}
   try{await navigator.clipboard.writeText(text+' '+url);toast('Link copied. Paste it into WhatsApp 📋');}catch(e){toast(url);}}
 
