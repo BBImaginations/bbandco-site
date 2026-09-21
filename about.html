@@ -8,80 +8,111 @@
 <meta property="og:title" content="About BB & Co Imaginations: inspired by two little boys, created by their mum">
 <meta property="og:description" content="The family story behind BB & Co Imaginations: children's picture books, an original song, animations and games inspired by real childhood moments.">
 <meta property="og:type" content="website">
+<meta property="og:image" content="https://bbandcoimaginations.co.uk/assets/og-image.jpg">
 <link rel="canonical" href="https://bbandcoimaginations.co.uk/about.html">
 <script type='module' src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "405cdb0cdcbc44d790ac322c1097422a"}'></script>
-<meta property="og:image" content="https://bbandcoimaginations.co.uk/assets/logo-wide.png">
 <link rel="icon" href="assets/icon.png" type="image/png">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/style.css?v=22">
+<link rel="preload" href="assets/fonts/fraunces.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="assets/fonts/nunitosans.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="assets/style.css?v=31">
+
 </head>
 <body>
+<a class="skip" href="#main">Skip to content</a>
 <header class="site-head">
   <div class="wrap">
-    <a class="brand" href="index.html" aria-label="BB & Co Imaginations home"><img src="assets/logo-wide.png" alt="BB & Co Imaginations"></a>
-    <button class="menu-btn" aria-expanded="false" aria-controls="nav" onclick="var n=document.getElementById('nav');n.classList.toggle('open');this.setAttribute('aria-expanded',n.classList.contains('open'))">Menu</button>
-    <nav id="nav"><ul><li><a href="index.html">Home</a></li><li><a href="books.html">Books</a></li><li><a href="music.html">Music</a></li><li><a href="youtube.html">YouTube</a></li><li><a href="games.html">Games</a></li><li><a href="about.html" aria-current="page">About</a></li><li><a href="blog/index.html">Blog</a></li></ul></nav>
+    <a class="brand" href="index.html" aria-label="BB & Co Imaginations home"><img src="assets/logo-wide.png" alt="BB & Co Imaginations" width="1200" height="240"></a>
+    <button class="menu-btn" aria-expanded="false" aria-controls="nav" onclick="var n=document.getElementById('nav');n.classList.toggle('open');this.setAttribute('aria-expanded',n.classList.contains('open'))"><span></span><span></span><span></span><b>Menu</b></button>
+    <nav id="nav"><ul><li><a href="index.html">Home</a></li><li><a href="books.html">Books</a></li><li><a href="music.html">Music</a></li><li><a href="youtube.html">Watch</a></li><li><a href="games.html">Games</a></li><li><a href="about.html" aria-current="page">About</a></li><li><a href="blog/index.html">Blog</a></li></ul><a class="btn btn-primary btn-sm nav-cta" href="books.html">Shop the books</a></nav>
   </div>
 </header>
-<main>
+<main id="main">
 
-<section>
+<section class="page-hero">
   <div class="wrap">
-    <h1>About us</h1>
-    <div class="about-grid">
-      <div>
-        <h2>Inspired by two little boys. Created by Mum.</h2>
-        <p class="lede">BB&amp;CO Imaginations was born from the everyday adventures of two little boys and a mum who wanted to capture the magic of their childhood.</p>
-        <p>Real moments, funny conversations, woodland adventures, made-up games and wonderful little discoveries become the inspiration for stories, songs, animations, games and more, created for other children and families to enjoy.</p>
-        <p>At the heart of BB&amp;CO Imaginations is a celebration of childhood: the adventures, the creativity, the curiosity and the incredible worlds children create from the simplest things.</p>
-        <p>We take those little moments and let imagination make them bigger.</p>
-        <p>Real childhood. Big imaginations. Stories brought to life in every way we can imagine.</p>
-      </div>
-      <div>
-        <figure class="portrait">
-          <img src="assets/sonia.jpg" alt="Sonia, author of The Adventures of Logan and Louis">
-        </figure>
-        <div class="aside-card">
-          <h3>What we make</h3>
-          <ul>
-            <li>Illustrated picture books for ages 4 to 9</li>
-            <li>Original songs for children</li>
-            <li>Animated short stories (coming soon)</li>
-            <li>Games and creative adventures (coming soon)</li>
-          </ul>
-          <h3 style="margin-top:20px">Say hello</h3>
-          <p style="margin:0">Schools, libraries and bookshops are very welcome. Email <a href="mailto:admin@bbandcoimaginations.co.uk">admin@bbandcoimaginations.co.uk</a> or find us on <a href="https://www.instagram.com/bbandcoimaginations" target="_blank" rel="noopener">Instagram</a>.</p>
-        </div>
-      </div>
+    <p class="eyebrow">About</p>
+    <h1>Inspired by two little boys. Created by Mum.</h1>
+  </div>
+</section>
+<section>
+  <div class="wrap about-grid">
+    <div class="about-copy">
+      <p class="lede">BB&amp;CO Imaginations was born from the everyday adventures of two little boys and a mum who wanted to capture the magic of their childhood.</p>
+      <p>Real moments, funny conversations, woodland adventures, made-up games and wonderful little discoveries become the inspiration for stories, songs, animations, games and more, created for other children and families to enjoy.</p>
+      <p>At the heart of BB&amp;CO Imaginations is a celebration of childhood: the adventures, the creativity, the curiosity and the incredible worlds children create from the simplest things.</p>
+      <p>We take those little moments and let imagination make them bigger.</p>
+      <p class="pull">Real childhood. Big imaginations. Stories brought to life in every way we can imagine.</p>
     </div>
+    <aside class="about-side">
+      <img class="portrait" src="assets/sonia.jpg" alt="Sonia, author of The Adventures of Logan and Louis">
+      <div class="side-card">
+        <h3>What we make</h3>
+        <ul>
+          <li>Illustrated picture books for ages 4 to 9</li>
+          <li>Original songs for children</li>
+          <li>Animated short stories (coming soon)</li>
+          <li>Games and creative adventures</li>
+        </ul>
+        <h3>Say hello</h3>
+        <p>Schools, libraries and bookshops are very welcome. Email <a href="mailto:admin@bbandcoimaginations.co.uk">admin@bbandcoimaginations.co.uk</a> or find us on <a href="https://www.instagram.com/bbandcoimaginations" target="_blank" rel="noopener">Instagram</a>.</p>
+      </div>
+    </aside>
   </div>
 </section>
 
 <section class="signup">
-  <div class="wrap">
-    <h2>New stories, straight to your inbox</h2>
-    <p>Be first to hear about new books, songs and animations. No spam, and you can leave any time.</p>
+  <div class="wrap signup-grid">
+    <div>
+      <h2>New stories, straight to your inbox</h2>
+      <p>Be first to hear about new books, songs and animations. No spam, and you can leave any time.</p>
+    </div>
     <form action="https://formspree.io/f/moeqnalk" method="POST">
-      <input type="email" name="email" placeholder="Your email address" required aria-label="Email address">
+      <label class="sr" for="em">Email address</label>
+      <input id="em" type="email" name="email" placeholder="Your email address" required>
       <input type="hidden" name="_subject" value="New sign-up from bbandcoimaginations.co.uk">
-      <button class="btn btn-ink" type="submit">Sign me up</button>
+      <button class="btn btn-primary" type="submit">Sign me up</button>
+      <small>We only use your email to send occasional updates from BB &amp; Co Imaginations.</small>
     </form>
-    <small>We only use your email to send occasional updates from BB &amp; Co Imaginations.</small>
   </div>
 </section>
 </main>
-<footer>
-  <div class="wrap">
-    <img class="foot-logo" src="assets/logo-wide.png" alt="BB & Co Imaginations">
-    <p>&copy; 2026 BB &amp; Co Imaginations. All rights reserved.</p>
-    <ul>
-      <li><a href="https://www.instagram.com/bbandcoimaginations" rel="me noopener" target="_blank">Instagram</a></li>
-      <li><a href="https://www.amazon.co.uk/s?k=adventures+of+logan+and+louis" rel="noopener" target="_blank">Amazon</a></li>
-      <li><a href="https://open.spotify.com/track/6FYsNU51wQm9ZFs7nCrOfL" rel="noopener" target="_blank">Spotify</a></li>
-      <li><a href="mailto:admin@bbandcoimaginations.co.uk">Email us</a></li>
-    </ul>
+<footer class="site-foot">
+  <div class="wrap foot-grid">
+    <div class="foot-brand">
+      <img src="assets/logo-wide.png" alt="BB & Co Imaginations" width="1200" height="240">
+      <p>Children&rsquo;s picture books, family music and free games, made by one family on the Surrey border and inspired by two little boys.</p>
+    </div>
+    <div>
+      <h4>Explore</h4>
+      <ul>
+        <li><a href="books.html">Books</a></li>
+        <li><a href="music.html">Music</a></li>
+        <li><a href="youtube.html">Animated series</a></li>
+        <li><a href="games.html">Games</a></li>
+        <li><a href="blog/index.html">Blog</a></li>
+        <li><a href="about.html">About</a></li>
+      </ul>
+    </div>
+    <div>
+      <h4>Follow</h4>
+      <ul>
+        <li><a href="https://www.instagram.com/bbandcoimaginations" rel="me noopener" target="_blank">Instagram</a></li>
+        <li><a href="https://open.spotify.com/track/6FYsNU51wQm9ZFs7nCrOfL" rel="noopener" target="_blank">Spotify</a></li>
+        <li><a href="https://music.apple.com/gb/album/butterflies/1885898033?i=1885898034" rel="noopener" target="_blank">Apple Music</a></li>
+        <li><a href="https://www.amazon.co.uk/s?k=adventures+of+logan+and+louis" rel="noopener" target="_blank">Amazon</a></li>
+      </ul>
+    </div>
+    <div>
+      <h4>Get in touch</h4>
+      <ul>
+        <li><a href="mailto:admin@bbandcoimaginations.co.uk">admin@bbandcoimaginations.co.uk</a></li>
+        <li>Schools, libraries and bookshops welcome</li>
+      </ul>
+    </div>
+  </div>
+  <div class="wrap foot-base">
+    <p>&copy; 2026 BB &amp; Co Imaginations Ltd. All rights reserved.</p>
+    <p>bbandcoimaginations.co.uk</p>
   </div>
 </footer>
 </body>

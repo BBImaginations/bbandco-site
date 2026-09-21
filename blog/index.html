@@ -8,58 +8,92 @@
 <meta property="og:title" content="Blog: ideas for reading, cooking and playing with young children | BB & Co Imaginations">
 <meta property="og:description" content="Notes from a family making children's books, songs and games: new releases, Christmas market dates and simple ideas for time with children aged 4 to 9.">
 <meta property="og:type" content="website">
+<meta property="og:image" content="https://bbandcoimaginations.co.uk/assets/og-image.jpg">
 <link rel="canonical" href="https://bbandcoimaginations.co.uk/blog/index.html">
 <script type='module' src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "405cdb0cdcbc44d790ac322c1097422a"}'></script>
-<meta property="og:image" content="https://bbandcoimaginations.co.uk/assets/logo-wide.png">
 <link rel="icon" href="../assets/icon.png" type="image/png">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="../assets/style.css?v=22">
+<link rel="preload" href="../assets/fonts/fraunces.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="../assets/fonts/nunitosans.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="../assets/style.css?v=31">
+
 </head>
 <body>
+<a class="skip" href="#main">Skip to content</a>
 <header class="site-head">
   <div class="wrap">
-    <a class="brand" href="../index.html" aria-label="BB & Co Imaginations home"><img src="../assets/logo-wide.png" alt="BB & Co Imaginations"></a>
-    <button class="menu-btn" aria-expanded="false" aria-controls="nav" onclick="var n=document.getElementById('nav');n.classList.toggle('open');this.setAttribute('aria-expanded',n.classList.contains('open'))">Menu</button>
-    <nav id="nav"><ul><li><a href="../index.html">Home</a></li><li><a href="../books.html">Books</a></li><li><a href="../music.html">Music</a></li><li><a href="../youtube.html">YouTube</a></li><li><a href="../games.html">Games</a></li><li><a href="../about.html">About</a></li><li><a href="../blog/index.html" aria-current="page">Blog</a></li></ul></nav>
+    <a class="brand" href="../index.html" aria-label="BB & Co Imaginations home"><img src="../assets/logo-wide.png" alt="BB & Co Imaginations" width="1200" height="240"></a>
+    <button class="menu-btn" aria-expanded="false" aria-controls="nav" onclick="var n=document.getElementById('nav');n.classList.toggle('open');this.setAttribute('aria-expanded',n.classList.contains('open'))"><span></span><span></span><span></span><b>Menu</b></button>
+    <nav id="nav"><ul><li><a href="../index.html">Home</a></li><li><a href="../books.html">Books</a></li><li><a href="../music.html">Music</a></li><li><a href="../youtube.html">Watch</a></li><li><a href="../games.html">Games</a></li><li><a href="../about.html">About</a></li><li><a href="../blog/index.html" aria-current="page">Blog</a></li></ul><a class="btn btn-primary btn-sm nav-cta" href="../books.html">Shop the books</a></nav>
   </div>
 </header>
-<main>
+<main id="main">
 
-<section>
+<section class="page-hero">
   <div class="wrap">
-    <h1>Blog</h1>
+    <p class="eyebrow">Blog</p>
+    <h1>Notes from the workshop</h1>
     <p class="lede">Occasional notes on what we are making and why.</p>
-    <ul class="posts">
-      <li class="post-card"><div class="post-body"><time datetime="2026-09-06">2026-09-06</time><h3><a href="2026-09-christmas-markets.html">Christmas is coming to BB & Co 🎄</a></h3><p style="margin:0">For the first time, you'll be able to find us at selected Christmas markets and fairs this year. Dates and locations coming soon.</p></div><a class="thumb" href="2026-09-christmas-markets.html"><img src="../assets/blog/christmas-markets.jpg" alt=""></a></li>
-    </ul>
+  </div>
+</section>
+<section>
+  <div class="wrap posts">
+    <a class="post-card" href="2026-09-christmas-markets.html"><img src="../assets/blog/christmas-markets.jpg" alt="" loading="lazy"><div><time datetime="2026-09-06">6 September 2026</time><h2>Christmas is coming to BB & Co</h2><p>For the first time, you'll be able to find us at selected Christmas markets and fairs this year. Dates and locations coming soon.</p><span class="more">Read the post</span></div></a>
   </div>
 </section>
 
 <section class="signup">
-  <div class="wrap">
-    <h2>New stories, straight to your inbox</h2>
-    <p>Be first to hear about new books, songs and animations. No spam, and you can leave any time.</p>
+  <div class="wrap signup-grid">
+    <div>
+      <h2>New stories, straight to your inbox</h2>
+      <p>Be first to hear about new books, songs and animations. No spam, and you can leave any time.</p>
+    </div>
     <form action="https://formspree.io/f/moeqnalk" method="POST">
-      <input type="email" name="email" placeholder="Your email address" required aria-label="Email address">
+      <label class="sr" for="em">Email address</label>
+      <input id="em" type="email" name="email" placeholder="Your email address" required>
       <input type="hidden" name="_subject" value="New sign-up from bbandcoimaginations.co.uk">
-      <button class="btn btn-ink" type="submit">Sign me up</button>
+      <button class="btn btn-primary" type="submit">Sign me up</button>
+      <small>We only use your email to send occasional updates from BB &amp; Co Imaginations.</small>
     </form>
-    <small>We only use your email to send occasional updates from BB &amp; Co Imaginations.</small>
   </div>
 </section>
 </main>
-<footer>
-  <div class="wrap">
-    <img class="foot-logo" src="../assets/logo-wide.png" alt="BB & Co Imaginations">
-    <p>&copy; 2026 BB &amp; Co Imaginations. All rights reserved.</p>
-    <ul>
-      <li><a href="https://www.instagram.com/bbandcoimaginations" rel="me noopener" target="_blank">Instagram</a></li>
-      <li><a href="https://www.amazon.co.uk/s?k=adventures+of+logan+and+louis" rel="noopener" target="_blank">Amazon</a></li>
-      <li><a href="https://open.spotify.com/track/6FYsNU51wQm9ZFs7nCrOfL" rel="noopener" target="_blank">Spotify</a></li>
-      <li><a href="mailto:admin@bbandcoimaginations.co.uk">Email us</a></li>
-    </ul>
+<footer class="site-foot">
+  <div class="wrap foot-grid">
+    <div class="foot-brand">
+      <img src="../assets/logo-wide.png" alt="BB & Co Imaginations" width="1200" height="240">
+      <p>Children&rsquo;s picture books, family music and free games, made by one family on the Surrey border and inspired by two little boys.</p>
+    </div>
+    <div>
+      <h4>Explore</h4>
+      <ul>
+        <li><a href="../books.html">Books</a></li>
+        <li><a href="../music.html">Music</a></li>
+        <li><a href="../youtube.html">Animated series</a></li>
+        <li><a href="../games.html">Games</a></li>
+        <li><a href="../blog/index.html">Blog</a></li>
+        <li><a href="../about.html">About</a></li>
+      </ul>
+    </div>
+    <div>
+      <h4>Follow</h4>
+      <ul>
+        <li><a href="https://www.instagram.com/bbandcoimaginations" rel="me noopener" target="_blank">Instagram</a></li>
+        <li><a href="https://open.spotify.com/track/6FYsNU51wQm9ZFs7nCrOfL" rel="noopener" target="_blank">Spotify</a></li>
+        <li><a href="https://music.apple.com/gb/album/butterflies/1885898033?i=1885898034" rel="noopener" target="_blank">Apple Music</a></li>
+        <li><a href="https://www.amazon.co.uk/s?k=adventures+of+logan+and+louis" rel="noopener" target="_blank">Amazon</a></li>
+      </ul>
+    </div>
+    <div>
+      <h4>Get in touch</h4>
+      <ul>
+        <li><a href="mailto:admin@bbandcoimaginations.co.uk">admin@bbandcoimaginations.co.uk</a></li>
+        <li>Schools, libraries and bookshops welcome</li>
+      </ul>
+    </div>
+  </div>
+  <div class="wrap foot-base">
+    <p>&copy; 2026 BB &amp; Co Imaginations Ltd. All rights reserved.</p>
+    <p>bbandcoimaginations.co.uk</p>
   </div>
 </footer>
 </body>
