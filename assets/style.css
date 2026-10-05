@@ -271,5 +271,3 @@ section{padding:96px 0}
 .btn-gold{background:var(--gold);color:var(--ink)}
 .btn-gold:hover{background:#fff}
 @media (max-width:800px){.release-grid{grid-template-columns:1fr;gap:28px}.release-art{max-width:340px;margin:0 auto}.waitlist{grid-template-columns:1fr}}
-
-.music-band p a,.release p a{color:var(--gold);text-decoration:underline;text-underline-offset:3px}
