@@ -265,7 +265,7 @@ h1,h2,h3{font-family:var(--display);font-weight:600;line-height:1.1}
 
 <script>
 /* =========================================================
-   RECIPE DATA — add a new recipe by adding one object here.
+   RECIPE DATA: add a new recipe by adding one object here.
    who: 'kid' (🟢 child can do), 'help' (🟡 grown-up helps), 'adult' (🔴 grown-up does)
    Anything with heat or sharp knives must be 'adult' or 'help'.
 ========================================================= */
@@ -359,7 +359,7 @@ function checkGuess(){if(!S.picked.size){toast('Tap a few things first 👆');re
   $('g-feedback').innerHTML=`<div class="bubble">${msg}${clues}</div>`;$('g-feedback').scrollIntoView({behavior:'smooth',block:'end'});
   snd(miss.length||wrong.length?'funny':'fanfare');if(!miss.length&&!wrong.length)confetti();
   $('g-btn').textContent='Got it! Kitchen mission →';$('g-btn').onclick=()=>{S.checked=false;renderFind();go('find');};}
-function clue(o){const n=o.n.toLowerCase();if(/plate|bowl/.test(n))return ' — what will you put it on or in?';if(/knife/.test(n))return ' — for spreading or cutting.';if(/spoon|whisk|fork/.test(n))return ' — for stirring or mixing.';if(/pan|tray/.test(n))return ' — something to cook it in.';if(/glove/.test(n))return ' — to keep grown-up hands safe.';return '.';}
+function clue(o){const n=o.n.toLowerCase();if(/plate|bowl/.test(n))return ': what will you put it on or in?';if(/knife/.test(n))return ': for spreading or cutting.';if(/spoon|whisk|fork/.test(n))return ': for stirring or mixing.';if(/pan|tray/.test(n))return ': something to cook it in.';if(/glove/.test(n))return ': to keep grown-up hands safe.';return '.';}
 
 /* ---------- FIND ---------- */
 function renderFind(){const r=S.r;S.found=new Set();$('f-list').innerHTML=r.needs.map((o,i)=>`<button class="ck" id="f${i}" onclick="tickFind(${i})"><span class="box"></span><span class="e">${o.e}</span>${o.n}</button>`).join('');paintFind();}
