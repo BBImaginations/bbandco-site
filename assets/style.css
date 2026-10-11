@@ -282,3 +282,23 @@ section{padding:96px 0}
 .release .presave .btn{font-size:1.08rem;padding:18px 32px}
 .presave-note{font-size:.95rem!important;color:rgba(255,255,255,.72)!important;margin:12px 0 0}
 .waitlist{margin-top:14px}
+
+/* press */
+.pr-tag{font-weight:800;font-size:.85rem;letter-spacing:.06em;text-transform:uppercase;color:var(--orange);margin:0 0 10px}
+.press h1{font-size:clamp(1.8rem,3.4vw,2.6rem);line-height:1.15;margin:0 0 14px}
+.pr-sub{font-size:1.15rem;color:var(--ink-2);font-style:italic;margin:0 0 26px;max-width:60ch}
+.pr-ends{font-weight:800;letter-spacing:.1em;margin:28px 0}
+.press h2{font-size:1.35rem;margin:28px 0 10px}
+.press ul{padding-left:20px}.press li{margin-bottom:10px;max-width:62ch}
+.press a{text-decoration:underline;text-underline-offset:3px}
+.pr-dl{margin-top:30px}
+.press-side figure{margin:0 0 24px}.press-side figure img{width:100%;height:auto;border-radius:16px;box-shadow:var(--shadow-cover)}
+.press-side figcaption{font-size:.85rem;color:var(--ink-3);margin-top:8px}
+.press-side h3{font-size:1.1rem;margin:22px 0 8px}
+.press-side .small{font-size:.9rem;color:var(--ink-3);margin:0 0 10px}
+.press-side ul.dl,.press-side ul.facts{display:block;list-style:none;padding:0;margin:0;gap:0}
+.press-side ul.dl li a{display:flex;justify-content:space-between;gap:12px;padding:11px 14px;border:1px solid var(--line);border-radius:12px;background:#fff;margin-bottom:8px;text-decoration:none;font-weight:700}
+.press-side ul.dl li a span{font-weight:600;color:var(--ink-3);font-size:.85rem;white-space:nowrap}
+.press-side ul.dl li a:hover{border-color:var(--orange)}
+.press-side ul.facts li{display:block;background:transparent;border:0;border-bottom:1px solid var(--line);border-radius:0;margin:0;padding:8px 0;font-size:.95rem;color:var(--ink)}
+.press-side ul.facts b{display:inline-block;min-width:90px;color:var(--ink-3);font-weight:700}
