@@ -14,7 +14,7 @@
 <link rel="icon" href="assets/icon.png" type="image/png">
 <link rel="preload" href="assets/fonts/fraunces.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="assets/fonts/nunitosans.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="assets/style.css?v=37">
+<link rel="stylesheet" href="assets/style.css?v=38">
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"Organization","name":"BB & Co Imaginations","url":"https://bbandcoimaginations.co.uk/","logo":"https://bbandcoimaginations.co.uk/assets/logo-wide.png","sameAs":["https://www.instagram.com/bbandcoimaginations","https://open.spotify.com/artist/5qFFXxI7zKwIdgemuB3jfc"],"email":"admin@bbandcoimaginations.co.uk"}</script>
 </head>
 <body>
@@ -54,6 +54,15 @@
       <p class="eyebrow light">New Christmas song <span class="release-badge">Out 6 November</span></p>
       <h2>Santa, Where Are You?</h2>
       <p class="lede">A brand-new Christmas song from the family behind The Adventures of Logan and Louis. Out on 6 November on Spotify, Apple Music, Amazon Music and all major platforms.</p>
+            <div class="countdown" id="santa-countdown" data-release="2026-11-06T00:00:00Z" aria-live="polite">
+        <p class="cd-label">Out in</p>
+        <div class="cd-grid">
+          <div><b data-cd="d">--</b><span>days</span></div>
+          <div><b data-cd="h">--</b><span>hours</span></div>
+          <div><b data-cd="m">--</b><span>mins</span></div>
+          <div><b data-cd="s">--</b><span>secs</span></div>
+        </div>
+      </div>
       <p>A lyric video is coming to our YouTube channel too, so the whole family can sing along.</p>
       <div class="actions presave"><a class="btn btn-gold" href="https://release.landr.com/991061413833" target="_blank" rel="noopener">Pre-save on Spotify &amp; Apple Music</a></div>
       <p class="presave-note">Pre-save it now and it lands in your library the moment it&rsquo;s out. Or leave your email and we&rsquo;ll remind you.</p>
@@ -68,6 +77,34 @@
     </div>
   </div>
 </section>
+<script>
+(function(){
+  var el=document.getElementById('santa-countdown'); if(!el) return;
+  var t=new Date(el.getAttribute('data-release')).getTime();
+  var sec=el.closest('.release');
+  function pad(n){return (n<10?'0':'')+n}
+  function live(){
+    el.innerHTML='<p class="cd-label">It&rsquo;s out!</p><p class="cd-live">Santa, Where Are You? is out now. Press play, turn it up and sing along.</p>';
+    var b=sec.querySelector('.release-badge'); if(b) b.textContent='Out now';
+    var p=sec.querySelector('.presave .btn'); if(p){p.textContent='Listen now'; p.href='https://release.landr.com/991061413833';}
+    var n=sec.querySelector('.presave-note'); if(n) n.innerHTML='Listen on Spotify, Apple Music, Amazon Music and YouTube Music. If you love it, add it to your Christmas playlist and share it with a friend.';
+    var f=sec.querySelector('.waitlist'); if(f) f.style.display='none';
+    var l=sec.querySelector('.release-copy .lede'); if(l) l.textContent='A brand-new Christmas song from the family behind The Adventures of Logan and Louis. Out now on Spotify, Apple Music, Amazon Music and all major platforms.';
+  }
+  function tick(){
+    var d=t-Date.now();
+    if(d<=0){live();return;}
+    var s=Math.floor(d/1000);
+    el.querySelector('[data-cd=d]').textContent=Math.floor(s/86400);
+    el.querySelector('[data-cd=h]').textContent=pad(Math.floor(s%86400/3600));
+    el.querySelector('[data-cd=m]').textContent=pad(Math.floor(s%3600/60));
+    el.querySelector('[data-cd=s]').textContent=pad(s%60);
+    setTimeout(tick,1000);
+  }
+  tick();
+})();
+</script>
+
 <section class="feature">
   <div class="wrap feature-grid">
     <div class="feature-art">
