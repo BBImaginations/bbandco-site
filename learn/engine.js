@@ -241,8 +241,10 @@
 
   M.partition=function(n){
     var D=digits(n).map(Number),w=D.length,vals=D.map(function(d,i){return d*Math.pow(10,w-1-i)}),names=['units','tens','hundreds','thousands','ten thousands'].slice(0,w).reverse();
-    var steps=[{say:"Every digit has a value that depends on its column.",view:grid([{cells:D.map(function(d){return {t:d}})}])}];
-    D.forEach(function(d,i){steps.push({say:"The "+d+" is in the "+names[i]+" column, so it is worth "+fmt(vals[i])+".",view:grid([{cells:D.map(function(x,j){return {t:x,hl:j===i}})},{cls:'ans',cells:D.map(function(x,j){return j===i?{t:fmt(vals[j]),hl:true}:null})}])})});
+    var heads=names.map(function(x){return x==='units'?'U':x==='tens'?'T':x==='hundreds'?'H':x==='thousands'?'Th':'TTh'});
+    function view(hl,label){return "<div class='pvwrap'><table class='pv'><tr>"+heads.map(function(h,i){return "<th class='"+(i===hl?'hl':'')+"'>"+h+"</th>"}).join('')+"</tr><tr>"+D.map(function(d,i){return "<td class='"+(i===hl?'hl':'')+"'>"+d+"</td>"}).join('')+"</tr></table>"+(label?"<div class='bigeq'>"+label+"</div>":"")+"</div>"}
+    var steps=[{say:"Every digit has a value that depends on its column.",view:view(-1,'')}];
+    D.forEach(function(d,i){steps.push({say:"The "+d+" is in the "+names[i]+" column, so it is worth "+fmt(vals[i])+".",view:view(i,d+" "+(d===1?names[i].replace(/s$/,""):names[i])+" = <mark>"+fmt(vals[i])+"</mark>")})});
     steps.push({say:fmt(n)+" = "+vals.filter(function(v){return v}).map(fmt).join(" + ")+".",view:"<div class='bigeq'>"+vals.filter(function(v){return v}).map(fmt).join(" + ")+"</div>"});
     return {title:"Place value",steps:steps};
   };
